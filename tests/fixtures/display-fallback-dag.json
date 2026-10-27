@@ -1,0 +1,295 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic display port audit",
+    "period": "Test",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "nodes": [
+    {
+      "id": "n0-0",
+      "label": "n0-0",
+      "role": "other"
+    },
+    {
+      "id": "n1-3",
+      "label": "n1-3",
+      "role": "other"
+    },
+    {
+      "id": "n2-1",
+      "label": "n2-1",
+      "role": "other"
+    },
+    {
+      "id": "n3-3",
+      "label": "n3-3",
+      "role": "other"
+    },
+    {
+      "id": "n0-3",
+      "label": "n0-3",
+      "role": "other"
+    },
+    {
+      "id": "n1-1",
+      "label": "n1-1",
+      "role": "other"
+    },
+    {
+      "id": "n2-3",
+      "label": "n2-3",
+      "role": "other"
+    },
+    {
+      "id": "n1-2",
+      "label": "n1-2",
+      "role": "other"
+    },
+    {
+      "id": "n2-0",
+      "label": "n2-0",
+      "role": "other"
+    },
+    {
+      "id": "n3-0",
+      "label": "n3-0",
+      "role": "other"
+    },
+    {
+      "id": "n0-2",
+      "label": "n0-2",
+      "role": "other"
+    },
+    {
+      "id": "n1-0",
+      "label": "n1-0",
+      "role": "other"
+    },
+    {
+      "id": "n0-4",
+      "label": "n0-4",
+      "role": "other"
+    },
+    {
+      "id": "n3-4",
+      "label": "n3-4",
+      "role": "other"
+    },
+    {
+      "id": "n2-4",
+      "label": "n2-4",
+      "role": "other"
+    },
+    {
+      "id": "n1-4",
+      "label": "n1-4",
+      "role": "other"
+    },
+    {
+      "id": "n2-2",
+      "label": "n2-2",
+      "role": "other"
+    },
+    {
+      "id": "n3-1",
+      "label": "n3-1",
+      "role": "other"
+    },
+    {
+      "id": "n0-1",
+      "label": "n0-1",
+      "role": "other"
+    }
+  ],
+  "links": [
+    {
+      "source": "n0-0",
+      "target": "n1-3",
+      "value": 1000001
+    },
+    {
+      "source": "n1-3",
+      "target": "n2-1",
+      "value": 2010000
+    },
+    {
+      "source": "n2-1",
+      "target": "n3-3",
+      "value": 1010000
+    },
+    {
+      "source": "n0-3",
+      "target": "n1-1",
+      "value": 1010000
+    },
+    {
+      "source": "n1-1",
+      "target": "n2-3",
+      "value": 10000
+    },
+    {
+      "source": "n2-3",
+      "target": "n3-3",
+      "value": 20000
+    },
+    {
+      "source": "n0-3",
+      "target": "n1-2",
+      "value": 10000
+    },
+    {
+      "source": "n1-2",
+      "target": "n2-0",
+      "value": 20001
+    },
+    {
+      "source": "n2-0",
+      "target": "n3-0",
+      "value": 10000
+    },
+    {
+      "source": "n0-2",
+      "target": "n1-0",
+      "value": 10000
+    },
+    {
+      "source": "n1-0",
+      "target": "n2-3",
+      "value": 1010000
+    },
+    {
+      "source": "n0-4",
+      "target": "n1-0",
+      "value": 1000002
+    },
+    {
+      "source": "n2-3",
+      "target": "n3-4",
+      "value": 1000000
+    },
+    {
+      "source": "n0-2",
+      "target": "n1-3",
+      "value": 10003
+    },
+    {
+      "source": "n0-0",
+      "target": "n1-0",
+      "value": 1
+    },
+    {
+      "source": "n1-0",
+      "target": "n2-1",
+      "value": 3
+    },
+    {
+      "source": "n2-1",
+      "target": "n3-4",
+      "value": 1000001
+    },
+    {
+      "source": "n1-3",
+      "target": "n2-4",
+      "value": 1
+    },
+    {
+      "source": "n2-4",
+      "target": "n3-0",
+      "value": 2
+    },
+    {
+      "source": "n0-2",
+      "target": "n1-4",
+      "value": 1000000
+    },
+    {
+      "source": "n1-4",
+      "target": "n2-2",
+      "value": 1000000
+    },
+    {
+      "source": "n2-2",
+      "target": "n3-3",
+      "value": 1000001
+    },
+    {
+      "source": "n0-4",
+      "target": "n1-2",
+      "value": 1
+    },
+    {
+      "source": "n2-0",
+      "target": "n3-4",
+      "value": 1
+    },
+    {
+      "source": "n1-1",
+      "target": "n2-2",
+      "value": 1000000
+    },
+    {
+      "source": "n2-2",
+      "target": "n3-4",
+      "value": 1000000
+    },
+    {
+      "source": "n0-0",
+      "target": "n1-4",
+      "value": 10000
+    },
+    {
+      "source": "n1-4",
+      "target": "n2-4",
+      "value": 10000
+    },
+    {
+      "source": "n2-4",
+      "target": "n3-4",
+      "value": 10000
+    },
+    {
+      "source": "n2-1",
+      "target": "n3-1",
+      "value": 2
+    },
+    {
+      "source": "n1-3",
+      "target": "n2-2",
+      "value": 3
+    },
+    {
+      "source": "n2-2",
+      "target": "n3-0",
+      "value": 2
+    },
+    {
+      "source": "n0-3",
+      "target": "n1-3",
+      "value": 1000000
+    },
+    {
+      "source": "n0-1",
+      "target": "n1-2",
+      "value": 10000
+    },
+    {
+      "source": "n2-0",
+      "target": "n3-1",
+      "value": 10000
+    },
+    {
+      "source": "n0-2",
+      "target": "n1-2",
+      "value": 1
+    },
+    {
+      "source": "n1-2",
+      "target": "n2-4",
+      "value": 1
+    }
+  ],
+  "mainChain": []
+}

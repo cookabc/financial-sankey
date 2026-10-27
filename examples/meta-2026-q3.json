@@ -1,0 +1,196 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "Meta · 2026 第三季度利润流向",
+    "company": "Meta Platforms",
+    "period": "2026 Q3",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Meta · 2026 Q3 官方财报",
+      "url": "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/default.aspx",
+      "publishedAt": "2026-10-21",
+      "notes": "2026-07-01 至 2026-09-30 · US GAAP · 未经审计。毛利润为营收减收入成本的计算值。一般及行政费用已含诉讼费用 9,890，不另扣减；应用家族收入小计 64,158 不重复计入。「其他应用收入」指应用家族（Family of Apps）其他收入。",
+      "links": [
+        {
+          "label": "SEC 原文",
+          "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：Meta Q3 2026 官方财报 · 2026-10-21 发布 · 2026-07-01 至 09-30 · US GAAP · 未经审计 · 百万美元",
+        "口径：毛利润为计算值；一般及行政费用已含诉讼费用 9,890，不另扣减；应用家族收入小计不重复计入。「其他应用收入」为 FoA 其他收入。",
+        "https://investor.atmeta.com/investor-news/press-release-details/2026/Meta-Reports-Third-Quarter-2026-Results/default.aspx"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "advertising",
+      "label": "广告收入",
+      "role": "source"
+    },
+    {
+      "id": "apps-other",
+      "label": "其他应用收入",
+      "role": "source"
+    },
+    {
+      "id": "reality-labs",
+      "label": "Reality Labs",
+      "role": "source"
+    },
+    {
+      "id": "revenue",
+      "label": "营业收入",
+      "role": "main",
+      "metric": "revenue"
+    },
+    {
+      "id": "cost",
+      "label": "收入成本",
+      "role": "expense"
+    },
+    {
+      "id": "gross",
+      "label": "毛利润（计算）",
+      "role": "main",
+      "metric": "gross"
+    },
+    {
+      "id": "rnd",
+      "label": "研发费用",
+      "role": "expense"
+    },
+    {
+      "id": "marketing",
+      "label": "营销及销售费用",
+      "role": "expense"
+    },
+    {
+      "id": "admin",
+      "label": "一般及行政费用",
+      "role": "expense"
+    },
+    {
+      "id": "operating",
+      "label": "营业利润",
+      "role": "main",
+      "metric": "operating"
+    },
+    {
+      "id": "other-gain",
+      "label": "利息及其他净收益",
+      "role": "gain"
+    },
+    {
+      "id": "pretax",
+      "label": "税前利润",
+      "role": "main",
+      "metric": "pretax"
+    },
+    {
+      "id": "tax",
+      "label": "所得税费用",
+      "role": "expense"
+    },
+    {
+      "id": "net",
+      "label": "净利润",
+      "role": "main",
+      "metric": "net"
+    }
+  ],
+  "links": [
+    {
+      "source": "advertising",
+      "target": "revenue",
+      "value": 63061
+    },
+    {
+      "source": "apps-other",
+      "target": "revenue",
+      "value": 1097
+    },
+    {
+      "source": "reality-labs",
+      "target": "revenue",
+      "value": 443
+    },
+    {
+      "source": "revenue",
+      "target": "cost",
+      "value": 13369
+    },
+    {
+      "source": "revenue",
+      "target": "gross",
+      "value": 51232
+    },
+    {
+      "source": "gross",
+      "target": "rnd",
+      "value": 20054
+    },
+    {
+      "source": "gross",
+      "target": "marketing",
+      "value": 3333
+    },
+    {
+      "source": "gross",
+      "target": "admin",
+      "value": 14857
+    },
+    {
+      "source": "gross",
+      "target": "operating",
+      "value": 12988
+    },
+    {
+      "source": "operating",
+      "target": "pretax",
+      "value": 12988
+    },
+    {
+      "source": "other-gain",
+      "target": "pretax",
+      "value": 13
+    },
+    {
+      "source": "pretax",
+      "target": "tax",
+      "value": 3141
+    },
+    {
+      "source": "pretax",
+      "target": "net",
+      "value": 9860
+    }
+  ],
+  "mainChain": [
+    "revenue",
+    "gross",
+    "operating",
+    "pretax",
+    "net"
+  ],
+  "order": [
+    "advertising",
+    "apps-other",
+    "reality-labs",
+    "revenue",
+    "cost",
+    "gross",
+    "rnd",
+    "marketing",
+    "admin",
+    "operating",
+    "other-gain",
+    "pretax",
+    "tax",
+    "net"
+  ],
+  "notes": []
+}

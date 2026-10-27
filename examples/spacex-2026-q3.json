@@ -1,0 +1,231 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "SpaceX · 2026 第三季度利润流向",
+    "company": "SpaceX",
+    "period": "2026 Q3",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "SpaceX · 2026 Q3 公开财报",
+      "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026066482/spaceexplorationtechnologi.htm",
+      "publishedAt": "2026-10-20",
+      "notes": "合并集团 · 截至 2026-09-30 的三个月 · 美国通用会计准则 · 未经审计。毛利润为营收减收入成本；「利润与其他收益合计」为绘图汇总值，非财报单列项目。所得税收益 390 作为额外流入，不是税费支出；零减值未绘制。",
+      "links": [
+        {
+          "label": "投资者关系",
+          "url": "https://ir.spacex.com/events/event-details/2026/Q3-2026-Earnings/default.aspx"
+        }
+      ],
+      "footnotes": [
+        "来源：SpaceX 2026 Q3 公开财报 · 2026-10-20 发布 · 合并集团 · US GAAP · 未经审计 · 百万美元",
+        "口径：毛利润为计算值；利润与其他收益合计为绘图汇总，非财报单列指标。所得税收益 390 计为流入。",
+        "https://www.sec.gov/Archives/edgar/data/1181412/000162828026066482/spaceexplorationtechnologi.htm"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "航天业务",
+      "label": "航天业务",
+      "role": "source"
+    },
+    {
+      "id": "营业收入",
+      "label": "营业收入",
+      "role": "main",
+      "metric": "revenue"
+    },
+    {
+      "id": "连接业务",
+      "label": "连接业务",
+      "role": "source"
+    },
+    {
+      "id": "超级智能业务",
+      "label": "超级智能业务",
+      "role": "source"
+    },
+    {
+      "id": "收入成本",
+      "label": "收入成本",
+      "role": "expense"
+    },
+    {
+      "id": "毛利润（计算）",
+      "label": "毛利润（计算）",
+      "role": "main",
+      "metric": "gross"
+    },
+    {
+      "id": "研发费用",
+      "label": "研发费用",
+      "role": "expense"
+    },
+    {
+      "id": "销售及管理费用",
+      "label": "销售及管理费用",
+      "role": "expense"
+    },
+    {
+      "id": "重组费用",
+      "label": "重组费用",
+      "role": "expense"
+    },
+    {
+      "id": "营业利润",
+      "label": "营业利润",
+      "role": "main",
+      "metric": "operating"
+    },
+    {
+      "id": "利润与其他收益合计",
+      "label": "利润与其他收益合计",
+      "role": "main",
+      "metric": "aggregate"
+    },
+    {
+      "id": "利息收入",
+      "label": "利息收入",
+      "role": "gain"
+    },
+    {
+      "id": "其他净收益",
+      "label": "其他净收益",
+      "role": "gain"
+    },
+    {
+      "id": "利息费用",
+      "label": "利息费用",
+      "role": "expense"
+    },
+    {
+      "id": "税前利润",
+      "label": "税前利润",
+      "role": "main",
+      "metric": "pretax"
+    },
+    {
+      "id": "净利润",
+      "label": "净利润",
+      "role": "main",
+      "metric": "net"
+    },
+    {
+      "id": "所得税收益",
+      "label": "所得税收益",
+      "role": "gain"
+    }
+  ],
+  "links": [
+    {
+      "source": "航天业务",
+      "target": "营业收入",
+      "value": 1767.0
+    },
+    {
+      "source": "连接业务",
+      "target": "营业收入",
+      "value": 5248.0
+    },
+    {
+      "source": "超级智能业务",
+      "target": "营业收入",
+      "value": 7560.0
+    },
+    {
+      "source": "营业收入",
+      "target": "收入成本",
+      "value": 5478.0
+    },
+    {
+      "source": "营业收入",
+      "target": "毛利润（计算）",
+      "value": 9097.0
+    },
+    {
+      "source": "毛利润（计算）",
+      "target": "研发费用",
+      "value": 4596.0
+    },
+    {
+      "source": "毛利润（计算）",
+      "target": "销售及管理费用",
+      "value": 1707.0
+    },
+    {
+      "source": "毛利润（计算）",
+      "target": "重组费用",
+      "value": 3.0
+    },
+    {
+      "source": "毛利润（计算）",
+      "target": "营业利润",
+      "value": 2791.0
+    },
+    {
+      "source": "营业利润",
+      "target": "利润与其他收益合计",
+      "value": 2791.0
+    },
+    {
+      "source": "利息收入",
+      "target": "利润与其他收益合计",
+      "value": 873.0
+    },
+    {
+      "source": "其他净收益",
+      "target": "利润与其他收益合计",
+      "value": 1025.0
+    },
+    {
+      "source": "利润与其他收益合计",
+      "target": "利息费用",
+      "value": 675.0
+    },
+    {
+      "source": "利润与其他收益合计",
+      "target": "税前利润",
+      "value": 4014.0
+    },
+    {
+      "source": "税前利润",
+      "target": "净利润",
+      "value": 4014.0
+    },
+    {
+      "source": "所得税收益",
+      "target": "净利润",
+      "value": 390.0
+    }
+  ],
+  "mainChain": [
+    "营业收入",
+    "毛利润（计算）",
+    "营业利润",
+    "利润与其他收益合计",
+    "税前利润",
+    "净利润"
+  ],
+  "order": [
+    "航天业务",
+    "连接业务",
+    "超级智能业务",
+    "营业收入",
+    "毛利润（计算）",
+    "收入成本",
+    "利息收入",
+    "其他净收益",
+    "营业利润",
+    "研发费用",
+    "销售及管理费用",
+    "重组费用",
+    "利润与其他收益合计",
+    "所得税收益",
+    "税前利润",
+    "利息费用",
+    "净利润"
+  ],
+  "notes": []
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "Anthropic · 2026 上半年营业结构",
+    "company": "Anthropic, PBC",
+    "period": "2026 H1（2026-01-01 至 2026-06-30）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Anthropic, PBC · Form S-1 注册说明书（2026-10-26 公开提交）",
+      "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm",
+      "publishedAt": "2026-10-26",
+      "notes": "合并集团 · 截至 2026-06-30 的六个月 · US GAAP · 未经审计。收入取附注 2 的 consumption-based 13,064 与 subscription-based 3,222；同一附注的地理口径为美国 11,763、国际 4,523。营业费用四项即利润表 Operating expenses 明细，合计 16,979。",
+      "links": [
+        {
+          "label": "SEC EDGAR 原文",
+          "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026067168/anthropicpbc-sx1.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：Anthropic, PBC Form S-1 · 2026-10-26 提交 · 2026-01-01 至 06-30 · US GAAP · 未经审计 · 百万美元",
+        "口径：营业收入 16,286 减营业费用 16,979，营业亏损 693；与招股书 Operating loss (693) 一致。",
+        "本图止于营业层面。税前亏损 80,727 与净亏损 80,748 中的主要部分是 72,388 的可转换票据、衍生负债与 SAFE 公允价值变动，属非现金计量，不是经营支出，故不作为流量绘制。",
+        "对照：2025 全年营收 4,585、营业亏损 8,060、净亏损 41,965。"
+      ]
+    }
+  },
+  "nodes": [
+    { "id": "consumption", "label": "消费型收入", "role": "source", "signedValue": 13064 },
+    { "id": "subscription", "label": "订阅型收入", "role": "source", "signedValue": 3222 },
+    { "id": "revenue", "label": "营业收入", "role": "main", "stage": 0, "metric": "revenue", "signedValue": 16286 },
+    { "id": "cost-pool", "label": "成本计算池", "role": "other", "stage": 1, "metric": "calculation-pool", "signedValue": 16979 },
+    { "id": "operating", "label": "营业亏损（差额）", "role": "loss", "stage": 1, "metric": "operating-loss", "signedValue": -693 },
+    { "id": "compute", "label": "算力与基础设施", "role": "expense", "signedValue": 8945 },
+    { "id": "personnel", "label": "人员费用", "role": "expense", "signedValue": 3152 },
+    { "id": "sales-marketing", "label": "销售、营销与合作伙伴", "role": "expense", "signedValue": 3168 },
+    { "id": "other-opex", "label": "其他运营与管理", "role": "expense", "signedValue": 1714 }
+  ],
+  "links": [
+    { "source": "consumption", "target": "revenue", "value": 13064 },
+    { "source": "subscription", "target": "revenue", "value": 3222 },
+    { "source": "revenue", "target": "cost-pool", "value": 16286 },
+    { "source": "operating", "target": "cost-pool", "value": 693 },
+    { "source": "cost-pool", "target": "compute", "value": 8945 },
+    { "source": "cost-pool", "target": "personnel", "value": 3152 },
+    { "source": "cost-pool", "target": "sales-marketing", "value": 3168 },
+    { "source": "cost-pool", "target": "other-opex", "value": 1714 }
+  ],
+  "mainChain": [],
+  "order": [
+    "consumption",
+    "subscription",
+    "revenue",
+    "cost-pool",
+    "operating",
+    "compute",
+    "personnel",
+    "sales-marketing",
+    "other-opex"
+  ],
+  "notes": [
+    "「营业亏损」是配平差额，不是一笔流出：营收 16,286 加亏损 693 恰为 16,979，覆盖四项营业费用。"
+  ]
+}
