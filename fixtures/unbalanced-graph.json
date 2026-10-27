@@ -1,0 +1,47 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic canonical imbalance fixture",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period 1",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "nodes": [
+    {
+      "id": "a",
+      "label": "Input",
+      "role": "source"
+    },
+    {
+      "id": "b",
+      "label": "Intermediate",
+      "role": "main"
+    },
+    {
+      "id": "c",
+      "label": "Output",
+      "role": "main"
+    }
+  ],
+  "links": [
+    {
+      "source": "a",
+      "target": "b",
+      "value": 10
+    },
+    {
+      "source": "b",
+      "target": "c",
+      "value": 8
+    }
+  ],
+  "mainChain": [
+    "b",
+    "c"
+  ],
+  "notes": [
+    "The two-unit mismatch is intentional test data. It must never be filled automatically."
+  ]
+}

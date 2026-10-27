@@ -1,0 +1,61 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic decimal fixture",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period 1",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "r",
+    "label": "Decimal revenue",
+    "items": [
+      {
+        "id": "a",
+        "label": "Component A",
+        "value": 0.1
+      },
+      {
+        "id": "b",
+        "label": "Component B",
+        "value": 0.2
+      }
+    ],
+    "reportedValue": 0.3
+  },
+  "stages": [
+    {
+      "id": "g",
+      "label": "Result after cost",
+      "deductions": [
+        {
+          "id": "c",
+          "label": "Decimal cost",
+          "value": 0.1
+        }
+      ],
+      "reportedValue": 0.2
+    },
+    {
+      "id": "n",
+      "label": "Net decimal result",
+      "additions": [
+        {
+          "id": "i",
+          "label": "Decimal gain",
+          "value": 0.005
+        }
+      ],
+      "deductions": [
+        {
+          "id": "t",
+          "label": "Decimal tax",
+          "value": 0.035
+        }
+      ],
+      "reportedValue": 0.17
+    }
+  ]
+}

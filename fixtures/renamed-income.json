@@ -1,0 +1,93 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic renamed-label fixture",
+    "company": "Another synthetic test entity",
+    "period": "Test period 1",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "opaque-0",
+    "label": "任意名称 0",
+    "items": [
+      {
+        "id": "opaque-1",
+        "label": "任意名称 1",
+        "value": 80
+      },
+      {
+        "id": "opaque-2",
+        "label": "任意名称 2",
+        "value": 20
+      }
+    ],
+    "reportedValue": 100
+  },
+  "stages": [
+    {
+      "id": "opaque-3",
+      "label": "任意名称 3",
+      "deductions": [
+        {
+          "id": "opaque-4",
+          "label": "任意名称 4",
+          "value": 60
+        }
+      ],
+      "reportedValue": 40
+    },
+    {
+      "id": "opaque-5",
+      "label": "任意名称 5",
+      "deductions": [
+        {
+          "id": "opaque-6",
+          "label": "任意名称 6",
+          "value": 7
+        },
+        {
+          "id": "opaque-7",
+          "label": "任意名称 7",
+          "value": 8
+        }
+      ],
+      "reportedValue": 25
+    },
+    {
+      "id": "opaque-8",
+      "label": "任意名称 8",
+      "additions": [
+        {
+          "id": "opaque-9",
+          "label": "任意名称 9",
+          "value": 3
+        }
+      ],
+      "deductions": [
+        {
+          "id": "opaque-10",
+          "label": "任意名称 10",
+          "value": 2
+        }
+      ],
+      "reportedValue": 26
+    },
+    {
+      "id": "opaque-11",
+      "label": "任意名称 11",
+      "deductions": [
+        {
+          "id": "opaque-12",
+          "label": "任意名称 12",
+          "value": 6
+        }
+      ],
+      "reportedValue": 20
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. Not a reported real-company financial statement."
+  ]
+}

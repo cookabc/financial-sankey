@@ -1,0 +1,45 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic absent-stage fixture",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period 1",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Total revenue",
+    "items": [
+      {
+        "id": "product",
+        "label": "Products",
+        "value": 80
+      },
+      {
+        "id": "service",
+        "label": "Services",
+        "value": 20
+      }
+    ],
+    "reportedValue": 100
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "Gross result",
+      "deductions": [
+        {
+          "id": "cost",
+          "label": "Cost of sales",
+          "value": 60
+        }
+      ],
+      "reportedValue": 40
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. Not a reported real-company financial statement."
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Invalid synthetic mixed-unit fixture",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period 1",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Total revenue",
+    "items": [
+      {
+        "id": "product",
+        "label": "Products",
+        "value": 80
+      },
+      {
+        "id": "service",
+        "label": "Services",
+        "value": 20
+      }
+    ],
+    "reportedValue": 100
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "Gross result",
+      "deductions": [
+        {
+          "id": "cost",
+          "label": "Cost of sales",
+          "value": 60,
+          "unit": "thousand"
+        }
+      ],
+      "reportedValue": 40
+    },
+    {
+      "id": "operating",
+      "label": "Operating result",
+      "deductions": [
+        {
+          "id": "research",
+          "label": "Research",
+          "value": 7
+        },
+        {
+          "id": "admin",
+          "label": "Administration",
+          "value": 8
+        }
+      ],
+      "reportedValue": 25
+    },
+    {
+      "id": "pretax",
+      "label": "Result before tax",
+      "additions": [
+        {
+          "id": "interest",
+          "label": "Interest income",
+          "value": 3
+        }
+      ],
+      "deductions": [
+        {
+          "id": "financing",
+          "label": "Financing cost",
+          "value": 2
+        }
+      ],
+      "reportedValue": 26
+    },
+    {
+      "id": "net",
+      "label": "Net result",
+      "deductions": [
+        {
+          "id": "tax",
+          "label": "Income tax",
+          "value": 6
+        }
+      ],
+      "reportedValue": 20
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. Not a reported real-company financial statement."
+  ]
+}
