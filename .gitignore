@@ -1,0 +1,6 @@
+node_modules/
+qa/
+*.tar.gz
+.sites-runtime/
+/dist
+.DS_Store
