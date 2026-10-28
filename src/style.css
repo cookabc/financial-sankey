@@ -114,7 +114,7 @@ td { overflow-wrap: anywhere; }
 #tooltip { position: fixed; z-index: 30; pointer-events: none; background: #303235f2; color: white; padding: 11px 14px; border-radius: 7px; font-size: 11px; line-height: 1.8; box-shadow: 0 5px 20px #0002; max-width: 280px; }
 #tooltip strong { display: block; font-size: 12px; font-weight: 500; }
 #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100; background: #393b3e; color: #fff; padding: 13px 22px; border-radius: 7px; font-size: 12px; box-shadow: 0 5px 25px #0002; max-width: 90vw; line-height: 1.6; }
-dialog { width: min(560px,calc(100vw - 32px)); border: 1px solid #e0e1e3; border-radius: 14px; padding: 30px; background: #fbfbfb; color: var(--ink); box-shadow: 0 24px 100px #292a2c44; }
+dialog { width: min(560px,calc(100vw - 32px)); max-height: calc(100vh - 40px); overflow: auto; border: 1px solid #e0e1e3; border-radius: 14px; padding: 30px; background: #fbfbfb; color: var(--ink); box-shadow: 0 24px 100px #292a2c44; }
 dialog::backdrop { background: #2122244d; backdrop-filter: blur(5px); }
 .dialog-head { display: flex; justify-content: space-between; align-items: flex-start; }
 .dialog-head h2 { font-family: var(--serif); font-weight: 500; font-size: 24px; margin: 0; }

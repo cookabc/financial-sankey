@@ -5,14 +5,15 @@ import {readFile} from 'node:fs/promises';
 import {normalizeInput,layoutFinancialGraph,generateSvg,parseText} from '../src/core/index.js';
 import {financeDocument} from '../src/browser/project.js';
 
-const us = async (name) => JSON.parse(await readFile(new URL(`../fixtures/us/${name}.json`, import.meta.url), 'utf8'));
+const us = async (name) => JSON.parse(await readFile(new URL(`../examples/${name}.json`, import.meta.url), 'utf8'));
+const edge = async (name) => JSON.parse(await readFile(new URL(`../fixtures/us/${name}.json`, import.meta.url), 'utf8'));
 
 const REAL_REPORTS = [
-  ['aapl-fq3-2025', {nodes: 13, links: 12, chain: 5, revenue: 94036, net: 23434}],
-  ['msft-fy25q4', {nodes: 12, links: 11, chain: 5, revenue: 76441, net: 27233}],
-  ['nvda-fq2-2026', {nodes: 18, links: 17, chain: 6, revenue: 46743, net: 26422}],
-  ['googl-q3-2025', {nodes: 19, links: 18, chain: 6, revenue: 102553, net: 34979}],
-  ['amzn-q3-2025', {nodes: 23, links: 22, chain: 5, revenue: 180169, net: 21187}],
+  ['us-aapl-fq3-2025', {nodes: 13, links: 12, chain: 5, revenue: 94036, net: 23434}],
+  ['us-msft-fy25q4', {nodes: 12, links: 11, chain: 5, revenue: 76441, net: 27233}],
+  ['us-nvda-fq2-2026', {nodes: 18, links: 17, chain: 6, revenue: 46743, net: 26422}],
+  ['us-googl-q3-2025', {nodes: 19, links: 18, chain: 6, revenue: 102553, net: 34979}],
+  ['us-amzn-q3-2025', {nodes: 23, links: 22, chain: 5, revenue: 180169, net: 21187}],
 ];
 
 function parseSvg(svg) {
@@ -38,7 +39,7 @@ test('六份美股真实财报全部规范化守恒并走财务主链布局', as
 });
 
 test('英特尔亏损桥：主链清空、回退自动布局、非现金差额逐级结转', async () => {
-  const input = await us('intc-fq2-2025');
+  const input = await us('us-intc-fq2-2025');
   const r = normalizeInput(input);
   assert.equal(r.balanced, true);
   assert.deepEqual(r.mainChain, [], 'any loss clears the main chain');
@@ -59,7 +60,7 @@ test('英特尔亏损桥：主链清空、回退自动布局、非现金差额�
 });
 
 test('Alphabet 对冲损益按规范建模为显式扣减，收入不被改成负数', async () => {
-  const input = await us('googl-q3-2025');
+  const input = await us('us-googl-q3-2025');
   const r = normalizeInput(input);
   // Six disclosed revenue segments sum to 102,553; the −207 hedging gains are a
   // contra-revenue component and must be a later deduction, not a negative item.
@@ -78,7 +79,7 @@ test('Alphabet 对冲损益按规范建模为显式扣减，收入不被改成�
 
 test('净利润高于营业利润的真实结构（谷歌/亚马逊）正常绘制', async () => {
   // GOOGL: operating 31,228 < net 34,979 (OI&E gains); AMZN: non-operating +10,748.
-  for (const [name, gain] of [['googl-q3-2025', 12759], ['amzn-q3-2025', 10186]]) {
+  for (const [name, gain] of [['us-googl-q3-2025', 12759], ['us-amzn-q3-2025', 10186]]) {
     const input = await us(name);
     const r = normalizeInput(input);
     const gains = r.nodes.filter(n => n.role === 'gain');
@@ -89,7 +90,7 @@ test('净利润高于营业利润的真实结构（谷歌/亚马逊）正常绘�
 });
 
 test('亚马逊七分部收入全部进入主链首列（密集来源布局）', async () => {
-  const input = await us('amzn-q3-2025');
+  const input = await us('us-amzn-q3-2025');
   const r = normalizeInput(input);
   const primary = r.links.filter(l => l.target === 'revenue');
   assert.equal(primary.length, 7);
@@ -101,7 +102,7 @@ test('亚马逊七分部收入全部进入主链首列（密集来源布局）',
 });
 
 test('边界：空 stages 只剩收入单节点链且可渲染', async () => {
-  const input = await us('edge-empty-stages');
+  const input = await edge('edge-empty-stages');
   const r = normalizeInput(input);
   assert.deepEqual(r.nodes.map(n => n.id), ['only', 'revenue']);
   assert.equal(r.links.length, 1);
@@ -111,7 +112,7 @@ test('边界：空 stages 只剩收入单节点链且可渲染', async () => {
 });
 
 test('边界：八级深链与收益池恰好贴着 2–12 主链上限', async () => {
-  const input = await us('edge-deep-chain');
+  const input = await edge('edge-deep-chain');
   const r = normalizeInput(input);
   const d = layoutFinancialGraph(r);
   assert.equal(d.rail.applied, true);
@@ -120,7 +121,7 @@ test('边界：八级深链与收益池恰好贴着 2–12 主链上限', async 
 });
 
 test('边界：1e15 金额上限可用，超限明确报错', async () => {
-  const input = await us('edge-max-amount');
+  const input = await edge('edge-max-amount');
   const r = normalizeInput(input);
   assert.equal(r.nodes.find(n => n.metric === 'revenue').signedValue, 1e15);
   parseSvg(generateSvg(input));
@@ -129,7 +130,7 @@ test('边界：1e15 金额上限可用，超限明确报错', async () => {
 });
 
 test('边界：百万分之一量级在默认与严格线宽下都不产生 NaN', async () => {
-  const input = await us('edge-tiny-amount');
+  const input = await edge('edge-tiny-amount');
   parseSvg(generateSvg(input, {minWidth: 4}));
   parseSvg(generateSvg(input, {minWidth: 0}), 'strict-width rendering must stay finite');
   const r = normalizeInput(input);
@@ -137,7 +138,7 @@ test('边界：百万分之一量级在默认与严格线宽下都不产生 NaN'
 });
 
 test('边界：亏损→盈亏平衡→转盈的完整恢复', async () => {
-  const input = await us('edge-loss-recovery');
+  const input = await edge('edge-loss-recovery');
   const r = normalizeInput(input);
   assert.equal(r.balanced, true);
   assert.deepEqual(r.mainChain, []);
@@ -149,13 +150,13 @@ test('边界：亏损→盈亏平衡→转盈的完整恢复', async () => {
 });
 
 test('边界：精度陷阱、负收入、循环流向都被明确拒绝', async () => {
-  await assert.rejects(async () => normalizeInput(await us('edge-precision-trap')), /十进制精度|round-trip/);
-  await assert.rejects(async () => normalizeInput(await us('edge-negative-revenue')), /不能为负|negative/);
-  await assert.rejects(async () => normalizeInput(await us('edge-cycle')), /循环|acyclic/);
+  await assert.rejects(async () => normalizeInput(await edge('edge-precision-trap')), /十进制精度|round-trip/);
+  await assert.rejects(async () => normalizeInput(await edge('edge-negative-revenue')), /不能为负|negative/);
+  await assert.rejects(async () => normalizeInput(await edge('edge-cycle')), /循环|acyclic/);
 });
 
 test('边界：最小两节点单流带图', async () => {
-  const input = await us('edge-minimal-graph');
+  const input = await edge('edge-minimal-graph');
   const r = normalizeInput(input);
   assert.equal(r.nodes.length, 2);
   assert.deepEqual(r.mainChain, []);
