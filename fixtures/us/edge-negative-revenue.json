@@ -1,0 +1,24 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: negative revenue component",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue",
+    "items": [
+      { "id": "product", "label": "Products", "value": 100 },
+      { "id": "contra", "label": "Contra revenue", "value": -5 }
+    ],
+    "reportedValue": 95
+  },
+  "stages": [],
+  "notes": [
+    "Synthetic test data only. Revenue components cannot be negative; normalization must reject this input and direct the author to model contra-revenue as an explicit stage deduction."
+  ]
+}

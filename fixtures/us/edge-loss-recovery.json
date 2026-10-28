@@ -1,0 +1,43 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: loss to zero to profit recovery",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue",
+    "items": [
+      { "id": "product", "label": "Products", "value": 100 }
+    ],
+    "reportedValue": 100
+  },
+  "stages": [
+    {
+      "id": "loss-stage",
+      "label": "Loss stage",
+      "deductions": [{ "id": "cost", "label": "Cost", "value": 130 }],
+      "reportedValue": -30
+    },
+    {
+      "id": "zero-stage",
+      "label": "Break-even stage",
+      "additions": [{ "id": "subsidy", "label": "Other gain", "value": 30 }],
+      "reportedValue": 0
+    },
+    {
+      "id": "profit-stage",
+      "label": "Recovered stage",
+      "additions": [{ "id": "interest", "label": "Interest income", "value": 25 }],
+      "deductions": [{ "id": "tax", "label": "Tax", "value": 10 }],
+      "reportedValue": 15
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. Exercises loss deficit, deficit carry-forward into a zero balance, and recovery to profit in one statement."
+  ]
+}

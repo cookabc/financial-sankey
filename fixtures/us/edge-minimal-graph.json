@@ -1,0 +1,21 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: minimal two-node graph",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "nodes": [
+    { "id": "in", "label": "Single source", "role": "source", "signedValue": 42 },
+    { "id": "out", "label": "Single sink", "role": "expense", "signedValue": 42 }
+  ],
+  "links": [
+    { "source": "in", "target": "out", "value": 42 }
+  ],
+  "mainChain": [],
+  "notes": [
+    "Synthetic test data only. The smallest drawable graph: one source, one sink, one link, empty main chain."
+  ]
+}

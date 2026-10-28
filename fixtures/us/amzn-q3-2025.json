@@ -1,0 +1,80 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "亚马逊 · 2025 年第三季度利润流向",
+    "company": "Amazon.com, Inc.",
+    "period": "2025-07-01 至 2025-09-30（2025 Q3）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Amazon 10-Q（2025-09-30 季度）· SEC EDGAR XBRL 渲染报表",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/amzn-20250930.htm",
+      "publishedAt": "2025-10-31",
+      "notes": "US GAAP · 未经审计。利润表行项取自 SEC XBRL 渲染利润表（R3）：净销售 180,169（产品 74,058／服务 106,111）；营业费用 162,747（销售成本 88,670／履约 27,679／技术与基础设施 28,962／销售营销 11,686／一般行政 2,875／其他营业净费用 2,875）；营业利润 17,422；利息收入 1,100；利息支出 538；其他净收益 10,186；税前 28,170；所得税 6,910；权益法投资损益净额（税后）−73；净利 21,187。图中收入七分部为 10-Q 收入附注拆分（加总与净销售一致）。",
+      "links": [
+        {
+          "label": "SEC XBRL 渲染利润表",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000123/R3.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：Amazon 2025 Q3 10-Q · 2025-10-31 提交 · US GAAP · 百万美元"
+      ]
+    }
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "净销售额",
+    "items": [
+      { "id": "online-stores", "label": "线上商店", "value": 67407 },
+      { "id": "physical-stores", "label": "实体商店", "value": 5578 },
+      { "id": "third-party", "label": "第三方卖家服务", "value": 42486 },
+      { "id": "subscriptions", "label": "订阅服务", "value": 12574 },
+      { "id": "aws", "label": "AWS", "value": 33006 },
+      { "id": "advertising", "label": "广告服务", "value": 17703 },
+      { "id": "other", "label": "其他", "value": 1415 }
+    ],
+    "reportedValue": 180169
+  },
+  "stages": [
+    {
+      "id": "operating",
+      "label": "营业利润",
+      "deductions": [
+        { "id": "cogs", "label": "销售成本", "value": 88670 },
+        { "id": "fulfillment", "label": "履约费用", "value": 27679 },
+        { "id": "tech", "label": "技术与基础设施", "value": 28962 },
+        { "id": "sm", "label": "销售与营销费用", "value": 11686 },
+        { "id": "ga", "label": "一般及行政费用", "value": 2875 },
+        { "id": "other-op", "label": "其他营业净费用", "value": 2875 }
+      ],
+      "reportedValue": 17422
+    },
+    {
+      "id": "pretax",
+      "label": "税前利润",
+      "additions": [
+        { "id": "interest-income", "label": "利息收入", "value": 1100 },
+        { "id": "other-net", "label": "其他收益净额（含股权投资重估）", "value": 10186 }
+      ],
+      "deductions": [
+        { "id": "interest-expense", "label": "利息支出", "value": 538 }
+      ],
+      "reportedValue": 28170
+    },
+    {
+      "id": "net",
+      "label": "净利润",
+      "deductions": [
+        { "id": "tax", "label": "所得税费用", "value": 6910 },
+        { "id": "equity-method", "label": "权益法投资损益净额（税后）", "value": 73 }
+      ],
+      "reportedValue": 21187
+    }
+  ],
+  "notes": [
+    "真实美股财报测试数据：Amazon 2025 Q3。其他净收益 10,186 主要为 Rivian 股权投资重估收益。",
+    "权益法投资损益（税后）−73 位于所得税与净利之间，按规范建模为最后阶段的扣减项。"
+  ]
+}

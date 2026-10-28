@@ -1,0 +1,77 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "英特尔 · 2025 年第二季度亏损桥",
+    "company": "Intel Corporation",
+    "period": "2025-03-30 至 2025-06-28（2025 Q2）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Intel 10-Q（2025-06-28 季度）· SEC EDGAR XBRL 渲染报表",
+      "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000109/intc-20250628.htm",
+      "publishedAt": "2025-07-24",
+      "notes": "US GAAP · 未经审计。利润表行项取自 SEC XBRL 渲染利润表（R2）：净收入 12,859；销售成本 9,317；毛利 3,542；研发 3,684；营销一般行政 1,144；重组及其他费用 1,890；经营亏损 −3,176；股权投资净收益 502；利息及其他净额 −95；税前亏损 −2,769；所得税费用 255；净亏损 −3,024（归属英特尔股东 −2,918，少数股东承担 −106）。图中止于净亏损总额 −3,024。",
+      "links": [
+        {
+          "label": "SEC XBRL 渲染利润表",
+          "url": "https://www.sec.gov/Archives/edgar/data/50863/000005086325000109/R2.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：Intel 2025 Q2 10-Q · 2025-07-24 提交 · US GAAP · 百万美元"
+      ]
+    }
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "净收入",
+    "items": [
+      { "id": "total", "label": "净收入（单一行项）", "value": 12859 }
+    ],
+    "reportedValue": 12859
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "毛利润",
+      "deductions": [
+        { "id": "cogs", "label": "销售成本", "value": 9317 }
+      ],
+      "reportedValue": 3542
+    },
+    {
+      "id": "operating",
+      "label": "经营亏损",
+      "deductions": [
+        { "id": "rnd", "label": "研发费用", "value": 3684 },
+        { "id": "mga", "label": "营销、一般及行政费用", "value": 1144 },
+        { "id": "restructuring", "label": "重组及其他费用", "value": 1890 }
+      ],
+      "reportedValue": -3176
+    },
+    {
+      "id": "pretax",
+      "label": "税前亏损",
+      "additions": [
+        { "id": "equity-gains", "label": "股权投资净收益", "value": 502 }
+      ],
+      "deductions": [
+        { "id": "interest-other", "label": "利息及其他净额", "value": 95 }
+      ],
+      "reportedValue": -2769
+    },
+    {
+      "id": "net",
+      "label": "净亏损",
+      "deductions": [
+        { "id": "tax", "label": "所得税费用", "value": 255 }
+      ],
+      "reportedValue": -3024
+    }
+  ],
+  "notes": [
+    "真实美股财报测试数据（亏损案例）：Intel 2025 Q2。毛利为正、经营环节起转入亏损并延续至税前与净亏损，检验非现金亏损差额桥与亏损结转。",
+    "税前亏损下仍发生所得税费用 255（估值备抵等所致）；净亏损总额 −3,024，其中归属英特尔股东 −2,918、少数股东 −106，图中止于总额。"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: dense revenue and the 1e15 amount ceiling",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "dollar"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue at the 1e15 ceiling",
+    "items": [
+      { "id": "r01", "label": "Segment 01", "value": 7e14 },
+      { "id": "r02", "label": "Segment 02", "value": 3e14 }
+    ],
+    "reportedValue": 1e15
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "Gross result",
+      "deductions": [{ "id": "cost", "label": "Cost", "value": 4e14 }],
+      "reportedValue": 6e14
+    },
+    {
+      "id": "net",
+      "label": "Net result",
+      "deductions": [{ "id": "tax", "label": "Tax", "value": 2e13 }],
+      "reportedValue": 5.8e14
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. Amounts sit exactly at the documented 1e15 absolute ceiling in unit=dollar."
+  ]
+}

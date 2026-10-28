@@ -310,6 +310,15 @@ other gains. Use the explicit revenue metric's `signedValue` instead.
 
 All `fixtures/*.json` files in this implementation are **synthetic test data**.
 They are not real-company reports, verified examples, or default page samples.
+The `fixtures/us/` directory is the exception: it holds six real US earnings
+reports (Apple FQ3 2025, Microsoft FY25 Q4, NVIDIA FQ2 2026, Alphabet Q3 2025,
+Amazon Q3 2025, Intel Q2 2025) whose line items were verified against the SEC
+EDGAR XBRL rendered statements (R-files). They are test inputs only, not page
+samples; any derived or residual line (values not directly disclosed for the
+period) is marked in that file's `notes`. `fixtures/us/edge-*.json` files are
+synthetic again: empty stages, deep chains, the 1e15 ceiling, tiny amounts,
+loss-to-zero-to-profit recovery, and inputs that must be rejected (precision
+loss, negative revenue, directed cycles).
 
 - `positive-income.json`: grouped revenue, ordered profits, gain pool.
 - `tax-benefit-income.json`: negative tax deduction with an honest gain.

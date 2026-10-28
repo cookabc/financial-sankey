@@ -1,0 +1,24 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: precision loss beyond Number",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue",
+    "items": [
+      { "id": "one", "label": "One", "value": 1 },
+      { "id": "tiny", "label": "Beyond double precision", "value": 1e-17 }
+    ],
+    "reportedValue": 1.00000000000000001
+  },
+  "stages": [],
+  "notes": [
+    "Synthetic test data only. The decimal total 1.00000000000000001 cannot round-trip through a JavaScript number; normalization must reject it instead of silently dropping the 1e-17 component."
+  ]
+}

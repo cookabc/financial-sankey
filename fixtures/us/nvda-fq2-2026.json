@@ -1,0 +1,81 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "英伟达 · 2026 财年第二季度利润流向",
+    "company": "NVIDIA Corporation",
+    "period": "2025-04-28 至 2025-07-27（FY2026 Q2）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "NVIDIA 10-Q（2025-07-27 季度）· SEC EDGAR XBRL 渲染报表",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
+      "publishedAt": "2025-08-27",
+      "notes": "US GAAP · 未经审计。利润表行项取自 SEC XBRL 渲染利润表（R2）：收入 46,743；收入成本 12,890；毛利 33,853；研发 4,291；销售一般行政 1,122；营业利润 28,440；利息收入 592；利息支出 62；其他净收益 2,236；税前 31,206；所得税 4,784；净利 26,422。收入的市场平台拆分（数据中心／游戏／专业可视化／汽车／OEM）取自业绩公告口径，加总与总收入一致，非利润表内行项。",
+      "links": [
+        {
+          "label": "SEC XBRL 渲染利润表",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/R2.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：NVIDIA FY2026 Q2 10-Q · 2025-08-27 提交 · US GAAP · 百万美元"
+      ]
+    }
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "营业收入",
+    "items": [
+      { "id": "datacenter", "label": "数据中心", "value": 41096 },
+      { "id": "gaming", "label": "游戏", "value": 4287 },
+      { "id": "proviz", "label": "专业可视化", "value": 601 },
+      { "id": "automotive", "label": "汽车", "value": 586 },
+      { "id": "oem", "label": "OEM 及其他", "value": 173 }
+    ],
+    "reportedValue": 46743
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "毛利润",
+      "deductions": [
+        { "id": "cost-of-revenue", "label": "收入成本", "value": 12890 }
+      ],
+      "reportedValue": 33853
+    },
+    {
+      "id": "operating",
+      "label": "营业利润",
+      "deductions": [
+        { "id": "rnd", "label": "研发费用", "value": 4291 },
+        { "id": "sga", "label": "销售、一般及行政费用", "value": 1122 }
+      ],
+      "reportedValue": 28440
+    },
+    {
+      "id": "pretax",
+      "label": "税前利润",
+      "additions": [
+        { "id": "interest-income", "label": "利息收入", "value": 592 },
+        { "id": "other-net", "label": "其他收益净额", "value": 2236 }
+      ],
+      "deductions": [
+        { "id": "interest-expense", "label": "利息支出", "value": 62 }
+      ],
+      "reportedValue": 31206
+    },
+    {
+      "id": "net",
+      "label": "净利润",
+      "deductions": [
+        { "id": "tax", "label": "所得税费用", "value": 4784 }
+      ],
+      "reportedValue": 26422
+    }
+  ],
+  "notes": [
+    "真实美股财报测试数据：NVIDIA FY2026 Q2（2025-07-27 止季度）。",
+    "收入市场平台拆分为业绩公告口径（加总 46,743 与利润表一致），数据中心内部的计算／网络拆分未单列。"
+  ]
+}

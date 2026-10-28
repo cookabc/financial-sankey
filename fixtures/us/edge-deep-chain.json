@@ -1,0 +1,68 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: deep chain, eight stages",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue",
+    "items": [
+      { "id": "a", "label": "Stream A", "value": 300 },
+      { "id": "b", "label": "Stream B", "value": 200 }
+    ],
+    "reportedValue": 500
+  },
+  "stages": [
+    {
+      "id": "s1", "label": "Stage 1",
+      "deductions": [{ "id": "d1", "label": "Deduction 1", "value": 40 }],
+      "reportedValue": 460
+    },
+    {
+      "id": "s2", "label": "Stage 2",
+      "deductions": [{ "id": "d2", "label": "Deduction 2", "value": 40 }],
+      "reportedValue": 420
+    },
+    {
+      "id": "s3", "label": "Stage 3",
+      "additions": [{ "id": "g3", "label": "Gain 3", "value": 20 }],
+      "deductions": [{ "id": "d3", "label": "Deduction 3", "value": 40 }],
+      "reportedValue": 400
+    },
+    {
+      "id": "s4", "label": "Stage 4",
+      "deductions": [{ "id": "d4", "label": "Deduction 4", "value": 40 }],
+      "reportedValue": 360
+    },
+    {
+      "id": "s5", "label": "Stage 5",
+      "additions": [{ "id": "g5", "label": "Gain 5", "value": 30 }],
+      "deductions": [{ "id": "d5", "label": "Deduction 5", "value": 40 }],
+      "reportedValue": 350
+    },
+    {
+      "id": "s6", "label": "Stage 6",
+      "deductions": [{ "id": "d6", "label": "Deduction 6", "value": 40 }],
+      "reportedValue": 310
+    },
+    {
+      "id": "s7", "label": "Stage 7",
+      "additions": [{ "id": "g7", "label": "Gain 7", "value": 10 }],
+      "deductions": [{ "id": "d7", "label": "Deduction 7", "value": 40 }],
+      "reportedValue": 280
+    },
+    {
+      "id": "s8", "label": "Stage 8",
+      "deductions": [{ "id": "d8", "label": "Final tax", "value": 56 }],
+      "reportedValue": 224
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. Eight consecutive stages with gains in stages 3, 5 and 7 exercise calculation pools along a deep rail."
+  ]
+}

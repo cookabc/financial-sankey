@@ -1,0 +1,79 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Alphabet · 2025 年第三季度利润流向",
+    "company": "Alphabet Inc.",
+    "period": "2025-07-01 至 2025-09-30（2025 Q3）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Alphabet 10-Q（2025-09-30 季度）· SEC EDGAR XBRL 渲染报表",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/goog-20250930.htm",
+      "publishedAt": "2025-10-30",
+      "notes": "US GAAP · 未经审计。利润表行项取自 SEC XBRL 渲染利润表（R4）：收入 102,346；收入成本 41,369；研发 15,151；销售与营销 7,205；一般行政 7,393；营业利润 31,228；其他收益／支出净额 12,759；税前 43,987；所得税 9,008；净利 34,979。收入分部拆分取自 10-Q 收入附注（加总 102,553），对冲损益 −207 属负收入成分，按数据规范显式建模为毛利阶段的扣减项，不是真实费用科目。",
+      "links": [
+        {
+          "label": "SEC XBRL 渲染利润表",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000091/R4.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：Alphabet 2025 Q3 10-Q · 2025-10-30 提交 · US GAAP · 百万美元"
+      ]
+    }
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "营业收入",
+    "items": [
+      { "id": "search", "label": "谷歌搜索及其他", "value": 56567 },
+      { "id": "youtube-ads", "label": "YouTube 广告", "value": 10261 },
+      { "id": "network", "label": "谷歌网络", "value": 7354 },
+      { "id": "subscriptions", "label": "订阅、平台与设备", "value": 12870 },
+      { "id": "cloud", "label": "谷歌云", "value": 15157 },
+      { "id": "other-bets", "label": "Other Bets", "value": 344 }
+    ]
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "毛利润",
+      "deductions": [
+        { "id": "cost-of-revenues", "label": "收入成本", "value": 41369 },
+        { "id": "hedging", "label": "对冲损益（负收入成分，规范建模扣减）", "value": 207 }
+      ],
+      "reportedValue": 60977
+    },
+    {
+      "id": "operating",
+      "label": "营业利润",
+      "deductions": [
+        { "id": "rnd", "label": "研发费用", "value": 15151 },
+        { "id": "sm", "label": "销售与营销费用", "value": 7205 },
+        { "id": "ga", "label": "一般及行政费用", "value": 7393 }
+      ],
+      "reportedValue": 31228
+    },
+    {
+      "id": "pretax",
+      "label": "税前利润",
+      "additions": [
+        { "id": "oie", "label": "其他收益／支出净额（含非上市股权重估收益）", "value": 12759 }
+      ],
+      "reportedValue": 43987
+    },
+    {
+      "id": "net",
+      "label": "净利润",
+      "deductions": [
+        { "id": "tax", "label": "所得税费用", "value": 9008 }
+      ],
+      "reportedValue": 34979
+    }
+  ],
+  "notes": [
+    "真实美股财报测试数据：Alphabet 2025 Q3。净利润 34,979 高于营业利润 31,228，差额来自其他收益净额 12,759（主要为非上市股权证券未实现重估收益）。",
+    "对冲损益 −207 未单列为负收入项（收入成分不允许为负），按数据规范建模为毛利阶段显式扣减并保留原方向说明。"
+  ]
+}

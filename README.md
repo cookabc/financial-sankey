@@ -24,6 +24,6 @@ node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.sv
 
 ## 验证
 
-保留 v10 全部节点/流带几何快照，上沿输出、窄直角矩形、真实比例、自然左右分支和细线显示均做回归。测试包括多种合成财报结构、重命名语义不变、亏损恢复、小数、零值、混合币种、异常守恒、恶意文本、项目读写、CSV/XLSX、CLI 和 UI。合成数据只在 `fixtures/` 用于测试，不作为页面公司示例。
+保留 v10 全部节点/流带几何快照，上沿输出、窄直角矩形、真实比例、自然左右分支和细线显示均做回归。测试包括多种合成财报结构、重命名语义不变、亏损恢复、小数、零值、混合币种、异常守恒、恶意文本、项目读写、CSV/XLSX、CLI 和 UI。合成数据只在 `fixtures/` 用于测试，不作为页面公司示例；`fixtures/us/` 收录六份经 SEC EDGAR XBRL 渲染报表逐行核验的真实美股财报（Apple、Microsoft、NVIDIA、Alphabet、Amazon、Intel），同样只作测试输入，派生/残差行项在各文件 notes 中明确标注。
 
 `src/core/index.js` 是唯一的公共 API。源码与构建产物按小步提交并同步远端，静态包与保存版本使用相同 commit。

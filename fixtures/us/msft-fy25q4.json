@@ -1,0 +1,74 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "微软 · 2025 财年第四季度利润流向",
+    "company": "Microsoft Corporation",
+    "period": "2025-04-01 至 2025-06-30（FY2025 Q4）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Microsoft FY2025 Q4 财报 · SEC XBRL 锚点核验",
+      "url": "https://www.microsoft.com/en-us/investor/earnings/fy-2025-q4/",
+      "publishedAt": "2025-07-30",
+      "notes": "US GAAP。微软不单独提交 Q4 10-Q，Q4 行项按「全年 − 前九个月」从 SEC XBRL 派生：毛利 52,427（193,893−141,466）、研发 8,829（32,488−23,659）、一般行政 1,990（7,223−5,233）、所得税 5,383（21,795−16,412）。销售与营销 7,285、其他收益／支出净额 −1,707 为链上残差（营业利润 34,323、净利 27,233 为公开锚点），已在 notes 标注。",
+      "links": [
+        {
+          "label": "Microsoft Investor Relations FY25 Q4",
+          "url": "https://www.microsoft.com/en-us/investor/earnings/fy-2025-q4/"
+        }
+      ],
+      "footnotes": [
+        "来源：Microsoft FY2025 Q4 财报 · 2025-07-30 · US GAAP · 百万美元 · 派生行见 notes"
+      ]
+    }
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "总收入",
+    "items": [
+      { "id": "total", "label": "总收入（单一行项）", "value": 76441 }
+    ],
+    "reportedValue": 76441
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "毛利润",
+      "deductions": [
+        { "id": "cost-of-revenue", "label": "收入成本", "value": 24014 }
+      ],
+      "reportedValue": 52427
+    },
+    {
+      "id": "operating",
+      "label": "营业利润",
+      "deductions": [
+        { "id": "rnd", "label": "研发费用", "value": 8829 },
+        { "id": "sm", "label": "销售与营销费用（残差推导）", "value": 7285 },
+        { "id": "ga", "label": "一般及行政费用", "value": 1990 }
+      ],
+      "reportedValue": 34323
+    },
+    {
+      "id": "pretax",
+      "label": "税前利润",
+      "deductions": [
+        { "id": "other-expense", "label": "其他收益／支出净额（残差推导）", "value": 1707 }
+      ],
+      "reportedValue": 32616
+    },
+    {
+      "id": "net",
+      "label": "净利润",
+      "deductions": [
+        { "id": "tax", "label": "所得税费用", "value": 5383 }
+      ],
+      "reportedValue": 27233
+    }
+  ],
+  "notes": [
+    "真实美股财报测试数据：Microsoft FY2025 Q4。收入为单行项（产品／服务拆分未核验，故不列入）。",
+    "毛利、研发、一般行政、所得税由 SEC XBRL「全年 − 前九个月」派生；销售与营销、其他收益／支出、税前利润为保持链条守恒的残差推导，非直接披露值。"
+  ]
+}

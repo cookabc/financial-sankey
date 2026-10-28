@@ -1,0 +1,31 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: tiny amounts with minimum line width",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "dollar"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue in sub-cent amounts",
+    "items": [
+      { "id": "big", "label": "Large component", "value": 1 },
+      { "id": "tiny", "label": "Tiny component", "value": 0.000001 }
+    ],
+    "reportedValue": 1.000001
+  },
+  "stages": [
+    {
+      "id": "net",
+      "label": "Net result",
+      "deductions": [{ "id": "cost", "label": "Cost", "value": 0.4 }],
+      "reportedValue": 0.600001
+    }
+  ],
+  "notes": [
+    "Synthetic test data only. A 1:1,000,000 ratio forces extreme scale compression; the default 4px minimum line width keeps the tiny band visible without changing amounts."
+  ]
+}

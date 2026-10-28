@@ -1,0 +1,74 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "苹果 · 2025 财年第三季度利润流向",
+    "company": "Apple Inc.",
+    "period": "2025-03-30 至 2025-06-28（FY2025 Q3）",
+    "currency": "USD",
+    "unit": "百万美元",
+    "source": {
+      "title": "Apple 10-Q（2025-06-28 季度）· SEC EDGAR XBRL 渲染报表",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/aapl-20250628.htm",
+      "publishedAt": "2025-08-01",
+      "notes": "US GAAP · 未经审计。全部行项取自 SEC XBRL 渲染利润表（R2），逐行核验且内部守恒：毛利 43,718 = 94,036 − 50,318；营业利润 28,202 = 43,718 − 15,516；税前 28,031 = 28,202 − 171；净利 23,434 = 28,031 − 4,597。",
+      "links": [
+        {
+          "label": "SEC XBRL 渲染利润表",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000073/R2.htm"
+        }
+      ],
+      "footnotes": [
+        "来源：Apple FY2025 Q3 10-Q · 2025-08-01 提交 · US GAAP · 百万美元"
+      ]
+    }
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "净销售额",
+    "items": [
+      { "id": "products", "label": "产品销售", "value": 66613 },
+      { "id": "services", "label": "服务收入", "value": 27423 }
+    ],
+    "reportedValue": 94036
+  },
+  "stages": [
+    {
+      "id": "gross",
+      "label": "毛利润",
+      "deductions": [
+        { "id": "cost-products", "label": "产品销售成本", "value": 43620 },
+        { "id": "cost-services", "label": "服务销售成本", "value": 6698 }
+      ],
+      "reportedValue": 43718
+    },
+    {
+      "id": "operating",
+      "label": "营业利润",
+      "deductions": [
+        { "id": "rnd", "label": "研发费用", "value": 8866 },
+        { "id": "sga", "label": "销售、一般及行政费用", "value": 6650 }
+      ],
+      "reportedValue": 28202
+    },
+    {
+      "id": "pretax",
+      "label": "税前利润",
+      "deductions": [
+        { "id": "other-expense", "label": "其他收益／支出净额", "value": 171 }
+      ],
+      "reportedValue": 28031
+    },
+    {
+      "id": "net",
+      "label": "净利润",
+      "deductions": [
+        { "id": "tax", "label": "所得税费用", "value": 4597 }
+      ],
+      "reportedValue": 23434
+    }
+  ],
+  "notes": [
+    "真实美股财报测试数据：Apple Inc. FY2025 Q3（2025-06-28 止季度），行项经 SEC XBRL 渲染报表逐行核验。"
+  ]
+}

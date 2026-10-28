@@ -1,0 +1,24 @@
+{
+  "schema": "liuzhang.financial",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: canonical cycle",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "nodes": [
+    { "id": "a", "label": "Node A", "role": "source", "signedValue": 10 },
+    { "id": "b", "label": "Node B", "role": "other", "signedValue": 10 },
+    { "id": "c", "label": "Node C", "role": "other", "signedValue": 10 }
+  ],
+  "links": [
+    { "source": "a", "target": "b", "value": 10 },
+    { "source": "b", "target": "c", "value": 10 },
+    { "source": "c", "target": "a", "value": 10 }
+  ],
+  "mainChain": [],
+  "notes": [
+    "Synthetic test data only. The link cycle a→b→c→a must be rejected by normalization."
+  ]
+}

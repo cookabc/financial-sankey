@@ -1,0 +1,23 @@
+{
+  "schema": "liuzhang.income-statement",
+  "version": 1,
+  "metadata": {
+    "title": "Synthetic edge case: no stages",
+    "company": "Synthetic test entity, not a real company",
+    "period": "Test period",
+    "currency": "USD",
+    "unit": "million"
+  },
+  "revenue": {
+    "id": "revenue",
+    "label": "Revenue only",
+    "items": [
+      { "id": "only", "label": "Only revenue item", "value": 100 }
+    ],
+    "reportedValue": 100
+  },
+  "stages": [],
+  "notes": [
+    "Synthetic test data only. stages is empty: the graph is a single revenue node with no flows."
+  ]
+}
