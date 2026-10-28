@@ -1,7 +1,5 @@
 # 流账 · 财报桑基图生成器
 
-[![Checks](https://github.com/cookabc/financial-sankey/actions/workflows/ci.yml/badge.svg)](https://github.com/cookabc/financial-sankey/actions/workflows/ci.yml)
-
 纯静态中文工作台与独立 JavaScript API。数据只在本机处理，没有外部 API、账号连接、分析追踪或 CDN。输入规范化后的任意公司财报，或三列流向数据；不自动读取 PDF、OCR 或散乱自然语言。
 
 - [财报数据规范](docs/financial-format.md)：显式 role / stage / mainChain 与利润表阶段定义。
