@@ -80,11 +80,28 @@ function wrapLabel(text, max = 11) {
 function textWidth(text, size) {
   return cells(String(text)) * size;
 }
+// Shorten one already-wrapped line to a cell budget, ending it with "…".
+// The ellipsis is itself a wide glyph, so it is reserved before keeping text.
+// Slicing by the renderer's own width model means the shortened line can never
+// be wider than a full line in the same column.
+function truncateLine(text, maxCells) {
+  const glyphs = Array.from(String(text));
+  const budget = Math.max(0, maxCells) - cells("…");
+  let kept = "", used = 0;
+  for (const glyph of glyphs) {
+    const cost = cells(glyph);
+    if (used + cost > budget) break;
+    kept += glyph;
+    used += cost;
+  }
+  return kept + "…";
+}
 export {
   element,
   escapeXml,
   fmt,
   textWidth,
+  truncateLine,
   wrap,
   wrapLabel
 };

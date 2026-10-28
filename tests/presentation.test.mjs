@@ -5,7 +5,7 @@ import {JSDOM} from 'jsdom';
 import {normalizeInput} from '../src/core/financial-data.js';
 import {layoutFinancialGraph} from '../src/core/layout.js';
 import {renderSvg} from '../src/core/render-svg.js';
-import {wrap, wrapLabel, textWidth} from '../src/core/svg-tree.js';
+import {wrap, wrapLabel, textWidth, truncateLine} from '../src/core/svg-tree.js';
 import {nodeColor, palettes} from '../src/core/theme.js';
 import {EXAMPLES} from '../src/examples/registry.js';
 import {financeDocument} from '../src/browser/project.js';
@@ -226,4 +226,52 @@ test('CSV input renders under its own headline, never the sample company name', 
   const svg = renderSvg(layoutFinancialGraph(report));
   assert.doesNotMatch(svg, /SpaceX|Meta/);
   assert.match(svg, /财务流向分析/);
+});
+
+test('every loadable sample carries verifiable provenance and reconciles', () => {
+  // A sample a user can pick must be a real, cited report: normalization has to
+  // balance, and the source card needs a title plus an HTTP(S) link. Synthetic
+  // data belongs to fixtures/, which the page never lists.
+  for (const example of EXAMPLES) {
+    const report = normalizeInput(example.document);
+    assert.equal(report.balanced, true, `${example.id} must balance`);
+    assert.ok(report.metadata.source?.title, `${example.id} needs a source title`);
+    assert.match(report.metadata.source.url, /^https:\/\//, `${example.id} needs an https source`);
+    assert.equal(report.metadata.company !== undefined || example.id.startsWith('us-'), true,
+      `${example.id} should name the company it reports on`);
+    assert.ok(example.text.length > 0, `${example.id} needs a three-column rendering`);
+  }
+  assert.equal(new Set(EXAMPLES.map((x) => x.id)).size, EXAMPLES.length, 'sample ids are unique');
+  assert.equal(new Set(EXAMPLES.map((x) => x.name)).size, EXAMPLES.length, 'sample titles are unique');
+});
+
+test('a truncated label line never gets wider than a full line in its column', () => {
+  // The ellipsis row used to slice a fixed 11 characters regardless of the
+  // column width, so at the large-label size (7 cells per line) it produced a
+  // 12-cell row that stuck out of the canvas.
+  assert.equal(truncateLine('母公司口径与合', 6), '母公司口径…');
+  assert.ok(textWidth(truncateLine('母公司口径与合', 6), 26) <= textWidth('母公司口径与合', 26));
+  // Latin keeps whole words: the cut never leaves half a glyph.
+  assert.ok(!/[a-z]$/.test(truncateLine('Parent company basis and consolidation', 6)));
+});
+
+test('a long source-side label is shifted into the canvas, not clipped by it', () => {
+  const report = normalizeInput({
+    schema: 'liuzhang.income-statement', version: 1,
+    metadata: {title: '长标签', period: 'P', currency: 'USD', unit: 'm'},
+    revenue: {
+      id: 'revenue', label: '营业收入合计（母公司口径与合并口径差异说明）',
+      items: [{id: 'one', label: '营业收入合计（母公司口径与合并口径差异说明）', value: 100}],
+      reportedValue: 100,
+    },
+    stages: [{id: 'net', label: '净利润', deductions: [{id: 'cost', label: '成本', value: 40}], reportedValue: 60}],
+  });
+  for (const layout of ['financial', 'auto']) {
+    const svg = renderSvg(layoutFinancialGraph(report, {layout}));
+    const {boxes} = labelBoxes(svg);
+    const [, , width] = doc(svg).documentElement.getAttribute('viewBox').split(' ').map(Number);
+    for (const b of boxes) {
+      assert.ok(b.x0 >= 1 && b.x1 <= width - 1, `${layout}: "${b.text}" spans ${b.x0.toFixed(0)}..${b.x1.toFixed(0)} of 0..${width}`);
+    }
+  }
 });

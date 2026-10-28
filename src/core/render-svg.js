@@ -1,7 +1,7 @@
 import { sankeyLinkHorizontal } from "d3-sankey";
 import { railNodeRect, financialLinkGeometry } from "./top-layout.js";
 import { CLEAR_COLORS, financialRole, clearLinkColor, nodeColor as colorForNode } from "./theme.js";
-import { element as el, fmt, wrap, wrapLabel, textWidth } from "./svg-tree.js";
+import { element as el, fmt, wrap, wrapLabel, textWidth, truncateLine } from "./svg-tree.js";
 const NS = "http://www.w3.org/2000/svg";
 function renderSvg(diagram, { interactive = false, selected = null } = {}) {
   const { report, config, model, graph, width: w, height: h, rail } = diagram;
@@ -67,8 +67,11 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
   // vertical collisions between blocks whose horizontal extents overlap, so a
   // crowded auto layout cannot print two labels on top of each other.
   const labelPlans = graph.nodes.map((node) => {
-    const allLines = wrapLabel(node.label ?? node.id, bigLabels ? 7 : 12);
-    const lines2 = allLines.length > 2 ? [allLines[0], allLines[1].slice(0, 11) + "…"] : allLines;
+    const lineChars = bigLabels ? 7 : 12;
+    const allLines = wrapLabel(node.label ?? node.id, lineChars);
+    // The ellipsis row must fit the same column as the rows above it: it may keep
+    // at most one glyph less than a normal line, because "…" occupies a cell.
+    const lines2 = allLines.length > 2 ? [allLines[0], truncateLine(allLines[1], lineChars - 1)] : allLines;
     const center = (node.y0 + node.y1) / 2, blockHeight = lines2.length * (bigLabels ? 28 : 22) + (state.config.labels ? bigLabels ? 28 : 23 : 0);
     let y = Math.max(subtitleY + 35, Math.min(h - 65 - blockHeight, center - blockHeight / 2 + 16));
     const externalSource = financial && !node.targetLinks.length && node.layer > 0;
@@ -114,6 +117,15 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
     const valueText = state.config.labels ? fmt(node.signedValue ?? node.value) : "";
     const valueWidth = valueText ? textWidth(valueText, bigLabels ? 23 : 15) : 0;
     const width = Math.max(widest, valueWidth);
+    // Horizontal clamp: a source-side label is anchored away from its node, so a
+    // long one can start outside the canvas. Shift the anchor (never the content)
+    // until the whole block sits inside the drawing band.
+    const margin = 10;
+    if (labelAnchor === "end") labelX = Math.max(labelX, width + margin);
+    else if (labelAnchor === "middle") {
+      const half = width / 2;
+      labelX = Math.max(half + margin, Math.min(w - half - margin, labelX));
+    } else if (labelX + width > w - margin) labelX = Math.max(margin, w - margin - width);
     const left = labelAnchor === "middle" ? labelX - width / 2 : labelAnchor === "end" ? labelX - width : labelX;
     // Clamp into the drawing band before any collision work. Clamping afterwards
     // silently moved a settled label back on top of its neighbour.
