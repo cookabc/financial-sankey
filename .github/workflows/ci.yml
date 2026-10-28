@@ -1,0 +1,38 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-15]
+        # 覆盖 README 声明的最低版本与各主版本的固定版本。
+        node: ['22.23.4', '24.22.1', '26.12.1']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: 单元测试
+        run: npm test
+      # dist/ 不入库，复现性靠两次构建逐字节比对。
+      - name: 构建产物可复现
+        run: |
+          npm run build
+          cp -R dist "$RUNNER_TEMP/dist-first"
+          npm run build
+          diff -r "$RUNNER_TEMP/dist-first" dist
