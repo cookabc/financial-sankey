@@ -1,35 +1,35 @@
-# 流账：可复用财报桑基图
+# Liuzhang: a reusable financial Sankey chart
 
-此工具处理任何公司**按规范整理的结构化财报**，不是 PDF/OCR 或自然语言识别器。运行与渲染都在本地，不需要外部 API。公司名称、节点显示文字及具体金额不参与布局选择；语义由显式 role、mainChain、metric 和 metadata 提供。
+This tool works on any company's **structured financial statement, already normalised to the spec**. It is not a PDF/OCR tool or a natural-language recogniser. Both running and rendering happen locally; no external API is involved. Company names, node display text and the actual amounts do not influence layout choice; the semantics come from explicit role, mainChain, metric and metadata.
 
-## 模块边界
+## Module boundaries
 
-- `src/core/financial-data.js`：规范化、币种单位一致性、会计等式校验、利润桥构建。纯函数，不改变输入。
-- `src/core/table-data.js`：三列 CSV/TSV 解析、通用 DAG 分析、CSV 序列化。
-- `src/core/layout.js` / `top-layout.js`：d3-sankey 自动布局；符合条件的显式主链采用上沿对齐财务布局。无法应用则返回原因，使用自动布局。
-- `src/core/theme.js`：role 驱动的配色，不匹配节点名称。
-- `src/core/render-svg.js`：纯 SVG 字符串输出，无 DOM、文件系统或网络依赖。
-- `src/core/trace.js`：路径追踪与收入占比。给定节点返回其上下游完整因果路径（节点集合 + 流向集合），以及该节点占收入的百分比。纯函数，供页面交互使用，不参与布局。
-- `src/browser/project.js`：项目文件读写、页面速填和三列表适配；不覆盖原数据及自定义配色。
-- `src/browser/session.js`：与页面无关的会话策略——换数据源时的抬头重置规则、节点兄弟列与排序数学。纯函数，可脱离页面测试。
-- `src/browser/panels.js`：来源卡与数据明细表的渲染。
-- `src/browser/feedback.js`：toast 与悬停提示等瞬时反馈。
-- `src/browser/export.js`：仅浏览器的下载、PNG 画布转换与导出编排（按钮态、结果播报）。
-- `src/app.js`：页面状态与事件接线；策略在 `session.js`，渲染在 `panels.js`。
-- `examples/`：可核验的外置真实样例。`fixtures/` 全是明确标注的合成测试数据，不展示为公司财报。
+- `src/core/financial-data.js`: normalisation, currency and unit consistency, accounting-equation validation, profit-bridge construction. Pure functions that do not mutate their input.
+- `src/core/table-data.js`: three-column CSV/TSV parsing, generic DAG analysis, CSV serialisation.
+- `src/core/layout.js` / `top-layout.js`: d3-sankey automatic layout; an eligible explicit main chain uses a top-aligned financial layout. When it cannot be applied, a reason is returned and automatic layout is used.
+- `src/core/theme.js`: role-driven colouring that does not match on node names.
+- `src/core/render-svg.js`: pure SVG string output with no DOM, filesystem or network dependency.
+- `src/core/trace.js`: causal path tracing and share-of-revenue. Given a node it returns its complete upstream and downstream causal path (a set of nodes plus a set of flows) and that node's percentage of revenue. Pure functions for page interaction; they take no part in layout.
+- `src/browser/project.js`: project-file read/write, the page's quick-fill and the three-column table adapter; it does not overwrite the original data or custom colours.
+- `src/browser/session.js`: page-independent session policy — the headline reset rule when the data source changes, node sibling columns and sorting maths. Pure functions, testable without the page.
+- `src/browser/panels.js`: rendering of the source card and the data detail table.
+- `src/browser/feedback.js`: transient feedback such as toasts and hover hints.
+- `src/browser/export.js`: browser-only download, PNG canvas conversion and export orchestration (button state, result announcement).
+- `src/app.js`: page state and event wiring; policy lives in `session.js`, rendering in `panels.js`.
+- `examples/`: verifiable external real-world samples. Everything in `fixtures/` is explicitly labelled synthetic test data and is never presented as a company's financials.
 
-## 安装与命令行
+## Install and command line
 
-要求 Node.js 22+。在源码目录执行 `npm ci`。
+Requires Node.js 22+. Run `npm ci` in the source directory.
 
 ```sh
 node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.svg
 node scripts/render-financial.mjs fixtures/tax-benefit-income.json --output chart.svg --gradient
 ```
 
-`--strict-width` 关闭最小可见线宽。CLI 不读取浏览器存储，不发网络请求，也不自动校验来源网页。PNG 是页面的浏览器导出能力；CLI 原生输出 SVG。
+`--strict-width` disables the minimum visible band width. The CLI does not read browser storage, make network requests or verify the source page automatically. PNG is the page's browser export capability; the CLI emits SVG natively.
 
-## JavaScript 调用
+## JavaScript API
 
 ```js
 import { readFile, writeFile } from 'node:fs/promises';
@@ -39,52 +39,52 @@ const input = JSON.parse(await readFile('report.json', 'utf8'));
 const svg = generateSvg(input, { palette: 'clear', ribbon: 'solid', minWidth: 4 });
 await writeFile('report.svg', svg);
 
-// 分步骤使用，允许展示不平衡诊断但不得伪装为已核验导出：
+// Step by step: you may surface unbalanced diagnostics, but must not pass them off as a verified export:
 const report = normalizeInput(input);
 const diagram = layoutFinancialGraph(report, { layout: 'financial' });
 console.log(diagram.model.warnings, diagram.rail?.reason);
 if (diagram.model.balanced) console.log(renderSvg(diagram));
 ```
 
-格式详情见 [financial-format.md](./financial-format.md)。两种显式 schema：`liuzhang.financial` 自定义 DAG，或 `liuzhang.income-statement` 分阶段利润表。页面上传和打开项目均可接收这两种 JSON。
+Format details are in [financial-format.md](./financial-format.md). Two explicit schemas: `liuzhang.financial` for a custom DAG, or `liuzhang.income-statement` for a staged income statement. Both the page upload and opening a project accept either JSON.
 
-## 渲染约定与边界
+## Rendering conventions and limits
 
-- 矩形真实高度与流值同比例。主链从源节点右边顶端输出；收益从目标左侧合流允许自然弯曲。不再以共同中心线作为标准。
-- 最小线宽默认 4 画布像素，是独立显示增强，不会改写金额。显示流宽与节点高度共同调整，显示端口也保持守恒；说明保留在使用指南和样式帮助，图表不添加绘图说明脚注。0 为严格比例。
-- 结构化输入使用明确的公司、期间、币种与单位；混合币种/单位拒绝，绝不自动换算。
-- 亏损使用明确标注的**非现金会计差额桥**并回退自动布局，不把差额当收入。不应将全部源节点之和称为营收。
-- 缺失项目必须明确填写 0 或从结构中省略；不能留空后自动当零。全零数据有效但没有可绘制宽度，绘图会给出错误。
-- 原始三列表仅表达非负、无环流向，未知语义不猜财务指标。明确主链可在样式中设置节点 ID；不能匹配则回退。
-- 结构化 JSON 会保留自定义显示名和来源；直接编辑三列表会清除原结构化语义/来源关联，避免把修改值仍标成官方原数据。
-- 项目文件只接受当前格式（`liuzhang.sankey` 版本 2）；其他版本会明确报错，不会静默改写或猜测。
-- 导出前需解决中间节点不平衡。循环、非数、无法精确保留的十进制总和会明确报错，不加隐藏差额。
-- 来源是调用者提供的说明，不代表工具独立审计或验证。生成图属于会计构成桥，并非现金流量表。
+- A rectangle's real height is proportional to its flow value. The main chain leaves the top of the source node's right edge; income merging in from the left of the target is allowed to curve naturally. A shared centre line is no longer the standard.
+- The minimum band width defaults to 4 canvas pixels and is an independent display enhancement that never rewrites an amount. Display band width and node height are adjusted together, and displayed ports stay conserved; the explanation lives in the usage guide and style help, and the chart carries no drawing-note footnote. A value of 0 is strict proportionality.
+- Structured input declares an explicit company, period, currency and unit; mixed currencies or units are rejected and never auto-converted.
+- A loss uses an explicitly labelled **non-cash accounting difference bridge** and falls back to automatic layout, rather than treating the difference as revenue. The sum of all source nodes should not be called revenue.
+- A missing item must either be an explicit 0 or be omitted from the structure; leaving it blank and defaulting to zero is not allowed. All-zero data is valid but has no drawable width, and drawing reports an error.
+- The raw three-column table expresses only non-negative, acyclic flows; unknown semantics are not guessed into financial metrics. An explicit main chain may set node IDs in the style; if they cannot be matched it falls back.
+- Structured JSON preserves custom display names and provenance; editing the three-column table directly clears the original structured semantics and provenance links, so modified values are never still labelled as official original data.
+- Project files accept only the current format (`liuzhang.sankey` version 2); other versions raise an explicit error rather than being silently rewritten or guessed at.
+- Intermediate node imbalance must be resolved before export. Cycles, non-numbers and decimal sums that cannot be preserved exactly raise explicit errors; no hidden difference is inserted.
+- Provenance is a description supplied by the caller and does not mean the tool independently audited or verified anything. The generated chart is an accounting composition bridge, not a cash-flow statement.
 
-## 验证
+## Verification
 
-`npm test` 包括几何快照、任意 ID/标签变换、正/负利润、税收收益、零值、小数、币种单位、项目读写、CLI、CSV/XLSX、导出与 UI 错误流；`npm run build` 打包静态站。
+`npm test` covers geometry snapshots, arbitrary ID/label transformations, positive and negative profit, tax benefit, zero values, decimals, currency and units, project read/write, the CLI, CSV/XLSX, export and UI error flows; `npm run build` bundles the static site.
 
-### 已知支持范围
+### Known support envelope
 
-这不是对任意公司、任意财报的无条件保证。利润表需按上面的阶段与增减项目规范化；资产负债表和现金流量表不自动转换为利润桥，需要调用者先建模成守恒 DAG。最多 80 个节点；三列表入口最多 200 条流向。财务主链要求 2–12 个连续节点、独立加项来源及直接扣减终点；复杂网络或亏损桥回退自动布局。密集来源会扩大画布，不丢弃项目，但拥挤图仍应人工复核标签。
+This is not an unconditional guarantee for any company or any financial statement. An income statement must first be normalised into the stages and additive/subtractive items described above; balance sheets and cash-flow statements are not automatically converted into a profit bridge and must first be modelled by the caller as a conserving DAG. At most 80 nodes; the three-column table entry accepts at most 200 flows. A financial main chain requires 2–12 consecutive nodes, independent additive sources and a direct deduction endpoint; complex networks or a loss bridge fall back to automatic layout. Dense sources widen the canvas rather than dropping items, but crowded charts should still have their labels reviewed by eye.
 
-极小数值导致尺度溢出、金额跨度导致正流量低于浮点坐标精度，均会明确报错而非生成 NaN/Infinity 图。可按提示选择合适的统一单位；若比例本身过大，应拆图或由调用者明确舍入，不会静默补数或取绝对值。最小线宽只增强可见部分：整条流带在源、目标两端使用同一个显示宽度，上下边界各是一条标准三次贝塞尔，不做局部收口或锥形收边；相邻流带按显示端口依次铺满节点高度，因此不会互相覆盖。
+Extremely small values that overflow the scale, or an amount span that pushes positive flows below floating-point coordinate precision, both raise explicit errors instead of producing a NaN/Infinity chart. Follow the message to pick a suitable common unit; if the ratio itself is too large, split the chart or round explicitly as the caller. Nothing is silently back-filled or absolute-valued. The minimum band width only enhances the visible part: a whole band uses the same display width at both its source and target, its top and bottom boundaries are each a standard cubic Bézier, and there is no local necking or tapered edge; adjacent bands fill the node height in display-port order, so they never overlap each other.
 
-节点标签在绘制前统一排版：先钳制在页眉与脚注之间，再对水平范围重叠的标签做垂直避让；若避让后超出画布，画布向下扩展而不是把标签压回邻标签之上。与流带相交的标签行会获得不透明纸色底衬。文字折行按字符宽度（中文 1 格、拉丁约 0.55 格）计算并保持拉丁词完整。
+Node labels are laid out uniformly before drawing: first clamped between the header and the footnote, then labels whose horizontal ranges overlap are vertically dodged; if dodging pushes past the canvas, the canvas grows downwards rather than squeezing labels back on top of their neighbours. Label rows that cross a band get an opaque paper-coloured backing. Wrapping is computed from character widths (Chinese 1 unit, Latin about 0.55 units) while keeping Latin words intact.
 
-测试覆盖多结构合成样例和已知反例，不等同所有图形的视觉质量保证。
+Tests cover multi-structure synthetic samples and known counter-examples; they are not a guarantee of visual quality for every chart.
 
-图表交互：悬停任一节点或流带会把它的完整因果路径高亮、其余淡出，并在图表上方显示该节点的金额与**占收入百分比**——一个原始数字无法说明它是否要紧，「研发费用占收入 31.5%」才能。追踪只切换 CSS 类，不重建 SVG，因此悬停零重绘；导出时追踪不会进入 SVG（导出从布局结果渲染，不读实时 DOM）。
+Chart interaction: hovering any node or band highlights its complete causal path and fades the rest, and shows that node's amount and **percentage of revenue** above the chart — a raw number cannot say whether something matters, "R&D is 31.5% of revenue" can. Tracing only toggles CSS classes and does not rebuild the SVG, so hovering causes zero redraws; tracing never enters an exported SVG (export renders from the layout result, not from live DOM).
 
-标签避让在渲染前按字宽估算计算。为避免“估算正确、真实字体却碰撞”，`npm run verify:labels` 会在无头 Chrome 中加载构建产物，用 canvas `measureText` 取真实字形墨迹范围，逐对比较九种状态（三个官方示例的财务/自动布局、亏损桥、英文 CSV、单流向速填、同宽标签堆叠、80 节点长链）并检查是否越出画布；当前结果为 0 碰撞、0 出界。它需要本地 HTTP 服务：
+Label dodging is computed from estimated character widths before rendering. To avoid "estimated correctly, but the real font collides anyway", `npm run verify:labels` loads the build output in headless Chrome, measures real glyph ink extents with canvas `measureText`, compares every pair across nine states (financial/automatic layout for the three official examples, the loss bridge, English CSV, single-flow quick-fill, equal-width label stacking, the 80-node long chain) and checks for overflow beyond the canvas; the current result is 0 collisions and 0 overflows. It needs a local HTTP server:
 
 ```sh
 python3 -m http.server 8123 --bind 127.0.0.1 --directory dist
 npm run verify:labels
 ```
 
-该脚本只覆盖这六种状态。极端密集或全新的数据结构仍建议目视复核一次。
+The script covers only those nine states. Extremely dense or genuinely new data structures should still get one visual review.
 
 ### Display-width solver
 
@@ -106,3 +106,7 @@ layout starts from actual widths, so enhancements do not accumulate.
 Minimum 0 disables all display additions. Minimum is measured vertically in
 SVG canvas pixels, not perpendicular to strongly sloping bands or in CSS
 viewport pixels. No output can guarantee arbitrary label collision freedom.
+
+---
+
+中文版见 [api.zh-CN.md](api.zh-CN.md)。

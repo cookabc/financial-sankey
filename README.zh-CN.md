@@ -9,8 +9,8 @@
 上图是载入 SpaceX 2026 Q3 官方财报后的默认状态：营收从左汇入，成本与费用向下流出，净利润靠右；绿色是额外收益。图下注明数据来源与口径，底部状态条给出「流向平衡 · 17 个节点 · 16 条流向」的守恒结论。
 
 - [财报数据规范](docs/financial-format.md)：显式 role / stage / mainChain 与利润表阶段定义。
-- [API、CLI 与模块边界](docs/api.md)：无需打开页面即可输出 SVG。
-- [本地运行与源码说明](docs/local-setup.md)：版本溯源、离线运行，以及已保存项目不随源码迁移的边界。
+- [API、CLI 与模块边界](docs/api.zh-CN.md)（[English](docs/api.md)）：无需打开页面即可输出 SVG。
+- [本地运行与源码说明](docs/local-setup.zh-CN.md)（[English](docs/local-setup.md)）：版本溯源、离线运行，以及已保存项目不随源码迁移的边界。
 - [外置官方样例](examples/)：SpaceX 2026 Q3、Meta 2026 Q3 与 Anthropic 2026 H1（S-1）。来源与计算说明随图导出，不参与核心逻辑。
 
 ## 使用

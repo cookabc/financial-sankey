@@ -9,8 +9,8 @@ A pure-static financial-sankey workbench **and** a standalone JavaScript API. Th
 The image above is the default state after loading SpaceX's official 2026 Q3 statement: revenue flows in from the left, cost and expenses flow down, net income sits on the right; green marks extra income. The source and basis are noted under the chart, and the status bar states the conservation result ("flows balanced · 17 nodes · 16 links").
 
 - [Financial data format](docs/financial-format.md): explicit role / stage / mainChain and income-statement stage definitions.
-- [API, CLI and module boundaries](docs/api.md): output SVG without opening the page.
-- [Local run & source notes](docs/local-setup.md): version provenance, running offline, and the boundary that saved projects do not travel with the source.
+- [API, CLI and module boundaries](docs/api.md) · [中文](docs/api.zh-CN.md): output SVG without opening the page.
+- [Local run & source notes](docs/local-setup.md) · [中文](docs/local-setup.zh-CN.md): version provenance, running offline, and the boundary that saved projects do not travel with the source.
 - [External official samples](examples/): SpaceX 2026 Q3, Meta 2026 Q3 and Anthropic 2026 H1 (S-1). Source and calculation notes are exported with the figure and are not part of the core logic.
 
 ## Usage

@@ -130,6 +130,8 @@ const dict = {
       "Set the title, period, unit and palette, and click a node to reorder its column. PNG suits slide decks; SVG keeps vector sharpness. A JSON project can be opened and edited again.",
     "help.note":
       "The three-column table takes non-negative flows and no cycles; a structured statement supports explicit additions and a loss accounting bridge. ",
+    "help.noteAfter":
+      " PDFs and free-form prose are not parsed. All import, calculation and export happen locally in the browser.",
     "help.spec": "Data format",
     "help.api": "JS / CLI docs",
     "palette.clear": "Clear",
@@ -259,7 +261,9 @@ const dict = {
     "help.s4.body":
       "设置标题、期间、单位和配色，点击节点调整同列顺序。PNG 适合演示文稿，SVG 保留矢量清晰度。JSON 项目可以再次打开编辑。",
     "help.note":
-      "三列表使用非负流值，不支持循环；结构化财报支持显式加减项与亏损会计桥。支持 JSON 结构化财报。",
+      "三列表使用非负流值，不支持循环；结构化财报支持显式加减项与亏损会计桥。",
+    "help.noteAfter":
+      "不识别 PDF 或散乱自然语言。所有导入、计算和导出均在浏览器本地完成。",
     "help.spec": "数据规范",
     "help.api": "JS / CLI 文档",
     "palette.clear": "清朗",
