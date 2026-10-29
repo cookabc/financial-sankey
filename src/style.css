@@ -18,9 +18,12 @@ button:active:not(:disabled) { transform: translateY(1px); }
 .brand-mark i:nth-child(2) { height: 31px; background: #757a81; }
 .brand-mark i:nth-child(3) { height: 20px; background: #c1c3c6; }
 .top-label { font-size: 12px; border-left: 1px solid #dadcde; padding-left: 26px; letter-spacing: 1px; color: #696d72; }
-.top-actions { margin-left: auto; display: flex; align-items: center; gap: 28px; }
-.privacy { font-size: 11px; color: #6d7177; }
-.privacy span,.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #606469; margin-right: 8px; }
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: 20px; flex: none; }
+/* The privacy note is the only shrinkable item: the language and guide
+   buttons keep their hit area whatever the brand length is. */
+.privacy { min-width: 0; flex: 0 1 auto; }
+.privacy { font-size: 11px; color: #6d7177; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.privacy-dot,.live-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #606469; margin-right: 8px; }
 .ghost,.text-btn { border: 0; background: transparent; color: var(--ink); }
 .ghost { font-size: 12px; padding: 9px 12px; border-radius: 6px; }
 .ghost:hover { background: #ecedee; }
@@ -219,7 +222,7 @@ body { background: var(--bg); color: var(--ink); }
 .brand-mark i:nth-child(3) { background: #b4b7bb; }
 .top-label { color: #686c71; border-color: #d5d7d9; }
 .privacy { color: #666a6f; }
-.privacy span,.live-dot { background: #80848a; }
+.privacy-dot,.live-dot { background: #80848a; }
 .workspace { grid-template-columns: 322px minmax(0,1fr); min-height: calc(100vh - 70px); }
 .sidebar { background: #f8f8f8; padding: 27px 24px; }
 .sidebar-heading h2 { font-size: 15px; }
@@ -343,7 +346,7 @@ body { background: #f7f8fa; color: #252c35; }
 .brand-mark i:nth-child(2) { background: #77a0d9; }
 .brand-mark i:nth-child(3) { background: #aebdd1; }
 .top-label,.privacy { color: #75808c; }
-.privacy span,.live-dot { background: #2e78d5; }
+.privacy-dot,.live-dot { background: #2e78d5; }
 .sidebar { background: #fff; border-color: #e3e8ef; }
 .sidebar-heading h2 { color: #313e4d; }
 .segmented { background: #f0f3f7; }

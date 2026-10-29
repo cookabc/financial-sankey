@@ -7,7 +7,10 @@ import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises
 const html=await readFile(new URL('../src/index.html',import.meta.url),'utf8');const dom=new JSDOM(html,{url:'https://local.example/'});
 for(const key of ['window','document','localStorage','XMLSerializer','innerWidth','innerHeight'])globalThis[key]=dom.window[key];
 globalThis.URL.createObjectURL=()=> 'blob:test';globalThis.URL.revokeObjectURL=()=>{};
-await import('../src/app.js');const $=id=>document.getElementById(id);const click=id=>$(id).click();const fill=(id,v)=>{$(id).value=v;$(id).dispatchEvent(new dom.window.Event('input'));};
+await import('../src/app.js');const $=id=>document.getElementById(id);const click=id=>$(id).click();
+// The chrome defaults to English. These tests assert the Chinese copy, so switch
+// once here; the language switch itself is covered by its own test.
+$('lang-btn').click();const fill=(id,v)=>{$(id).value=v;$(id).dispatchEvent(new dom.window.Event('input'));};
 test('initial official report metrics, vector paths and source',()=>{assert.equal($('summary'),null);assert.equal(document.querySelectorAll('.sankey-link').length,16);assert.equal($('demo-badge').textContent,'含来源');assert.equal($('svg-btn').disabled,false);assert.equal($('source-card').hidden,false);assert.match($('sankey').textContent,/www.sec.gov/);assert.match($('sankey').textContent,/所得税收益 390 计为流入/);});
 test('new reference theme has solid semantic ribbons and white export background',()=>{assert.equal($('palette-name').textContent,'清朗');assert.equal($('sankey').querySelector('linearGradient'),null);assert.equal($('sankey').firstElementChild.getAttribute('fill'),'#ffffff');assert.deepEqual(new Set([...document.querySelectorAll('.sankey-link')].map(p=>p.getAttribute('fill'))),new Set(['#61778d','#1167d9','#ea5b0c','#07985b']));});
 test('palette and ribbon are independent controls without changing data',()=>{const text=$('data-text').value;document.querySelector('[data-palette=sunrise]').click();assert.equal($('palette-name').textContent,'晴日');$('ribbon-input').value='gradient';$('ribbon-input').dispatchEvent(new dom.window.Event('change'));assert.ok($('sankey').querySelector('linearGradient'));document.querySelector('[data-palette=clear]').click();assert.equal($('data-text').value,text);assert.ok($('sankey').querySelector('linearGradient'));$('ribbon-input').value='solid';$('ribbon-input').dispatchEvent(new dom.window.Event('change'));});
@@ -257,4 +260,20 @@ test('the exported SVG is never dimmed by an active trace',()=>{
  assert.doesNotMatch(svg,/trace-readout/,'no readout markup leaks into the export');
  assert.doesNotMatch(svg,/opacity="0\.1[0-9]?"/,'nothing is exported at dimmed opacity');
  click('node-close');
+});
+
+test('the chrome defaults to English and switches to Chinese without touching data',()=>{
+ // This block runs after the shared switch above, so flip back to compare.
+ click('lang-btn');
+ assert.equal($('lang-btn').textContent,'中文','the switch offers Chinese while English is active');
+ assert.equal(document.documentElement.lang,'en');
+ assert.match($('generate-btn').textContent,/Generate chart/);
+ assert.equal($('finance-tab').textContent,'Income statement');
+ assert.equal($('demo-badge').textContent,'Has source');
+ const dataBefore=$('data-text').value;
+ click('lang-btn');
+ assert.equal(document.documentElement.lang,'zh');
+ assert.match($('generate-btn').textContent,/生成桑基图/);
+ assert.equal($('finance-tab').textContent,'利润表速填');
+ assert.equal($('data-text').value,dataBefore,'switching the language must not rewrite the data');
 });

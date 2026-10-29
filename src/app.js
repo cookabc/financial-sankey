@@ -1,4 +1,3 @@
-import { paletteNames } from "./core/theme.js";
 import { parseText, rowsToLinks, toCSV } from "./core/table-data.js";
 import { layoutFinancialGraph } from "./core/layout.js";
 import { renderSvg } from "./core/render-svg.js";
@@ -10,7 +9,25 @@ import { hideTip, moveTip, showTip, toast } from "./browser/feedback.js";
 import { describeTrace, tracePath } from "./core/trace.js";
 import { renderDetails, renderSource } from "./browser/panels.js";
 import { HEADLINE_FIELDS, adjacentSibling, canvasOrder, dropInheritedHeadline, orderedSiblings, swapInOrder } from "./browser/session.js";
+import { detectLang, LANG_KEY, paletteLabel, translator } from "./browser/i18n.js";
 const $ = (id) => document.getElementById(id);
+
+/* Interface language. English is the default; the switch flips it and persists
+the choice. Only chrome copy changes — data labels and core validation messages
+keep whatever the data says, so an exported chart is language-independent. */
+let lang = detectLang();
+let t = translator(lang);
+
+function applyChrome() {
+  document.documentElement.lang = lang;
+  const title = t("doc.title");
+  document.title = title;
+  const meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute("content", t("doc.description"));
+  for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
+  for (const el of document.querySelectorAll("[data-i18n-aria]")) el.setAttribute("aria-label", t(el.dataset.i18nAria));
+}
+
 // The storage key is a stable identifier, not a version marker: renaming it
 // would silently orphan every project already saved in a reader's browser.
 const STORAGE_KEY = "liuzhang-project-v1";
@@ -21,9 +38,9 @@ function mainChain() {
 function persist() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    $("local-save-state").textContent = "已保存在此浏览器";
+    $("local-save-state").textContent = t("saved.local");
   } catch {
-    $("local-save-state").textContent = "本地缓存不可用，请保存 JSON 项目";
+    $("local-save-state").textContent = t("saved.failed");
   }
 }
 // Switching input mode is a valid re-render, not a pending edit: visiting the
@@ -43,7 +60,7 @@ function setMode(mode) {
 function markDirty() {
   dirty = true;
   $("source-card").hidden = true;
-  $("demo-badge").textContent = "待更新数据";
+  $("demo-badge").textContent = t("badge.stale");
   $("dirty-note").hidden = false;
   $("svg-btn").disabled = true;
   $("png-btn").disabled = true;
@@ -60,7 +77,7 @@ function syncInputs() {
   $("labels-input").checked = state.config.labels;
   $("link-labels-input").checked = state.config.linkLabels;
   document.querySelectorAll("[data-palette]").forEach((b) => b.classList.toggle("active", b.dataset.palette === state.config.palette));
-  $("palette-name").textContent = paletteNames[state.config.palette];
+  $("palette-name").textContent = paletteLabel(t, state.config.palette);
   setMode(state.mode);
 }
 function generate() {
@@ -91,7 +108,7 @@ function render() {
   const focused = document.activeElement;
   const focusNode = focused?.dataset?.node ?? null;
   const focusLink = focused?.classList?.contains("flow-hit") ? focused.dataset.link : null;
-  const metadata = { ...report.metadata, title: state.config.title, period: state.config.period || "未指定期间", currency: state.config.currency || "未指定", unit: state.config.unit || "未指定" };
+  const metadata = { ...report.metadata, title: state.config.title, period: state.config.period || t("period.unspecified"), currency: state.config.currency || t("misc.unspecified"), unit: state.config.unit || t("misc.unspecified") };
   const sourceBasis = ["period", "currency", "unit"].every((k) => metadata[k] === report.metadata[k]);
   if (!sourceBasis) delete metadata.source;
   const current = { ...report, metadata };
@@ -113,24 +130,24 @@ function render() {
   $("layout-note").classList.toggle("warning", Boolean(railNote));
   $("chain-settings").hidden = state.mode === "finance";
   $("chain-input").disabled = state.mode === "finance";
-  $("demo-badge").textContent = metadata.source ? "含来源" : state.demo ? "演示数据" : "自定义数据";
+  $("demo-badge").textContent = metadata.source ? t("badge.sourced") : state.demo ? t("badge.demo") : t("badge.custom");
   renderSource(metadata.source);
   bindChart();
   bindTraceHover();
-  $("chart-status").textContent = `${model.balanced ? "✓ 流向平衡" : "△ 存在不平衡"} · ${model.nodes.length} 个节点 · ${model.links.length} 条流向`;
+  $("chart-status").textContent = `${model.balanced ? t("status.balanced") : t("status.unbalanced")} · ${model.nodes.length} ${t("status.nodes")} · ${model.links.length} ${t("status.links")}`;
   $("chart-status").classList.toggle("warning", !model.balanced);
   // analyzeLinks already reports zero-valued flows with the counts that apply
   // to this render. The structured report carries its own zero note as well, so
   // dropping the duplicate keeps one statement per fact in the panel.
   const warnings = [...model.warnings, ...(report.warnings ?? []).filter((w) => w.type !== "balance" && w.type !== "zero" && w.code !== "zero-links")];
   $("validation-panel").hidden = !warnings.length;
-  $("validation-panel").innerHTML = warnings.length ? `<strong>${model.balanced ? "数据处理说明" : "请核对以下流向，未自动补齐差额"}</strong><ul>${warnings.map((w) => `<li>${w.type === "balance" ? `「${esc(w.node)}」流入 ${fmt(w.in)}，流出 ${fmt(w.out)}，差额 ${fmt(w.diff)} ${esc(state.config.unit)}。` : esc(w.message)}</li>`).join("")}</ul>` : "";
+  $("validation-panel").innerHTML = warnings.length ? `<strong>${model.balanced ? esc(t("warn.heading")) : esc(t("warn.headingBad"))}</strong><ul>${warnings.map((w) => `<li>${w.type === "balance" ? `「${esc(w.node)}」流入 ${fmt(w.in)}，流出 ${fmt(w.out)}，差额 ${fmt(w.diff)} ${esc(state.config.unit)}。` : esc(w.message)}</li>`).join("")}</ul>` : "";
   $("svg-btn").disabled = dirty || !model.balanced;
   $("png-btn").disabled = dirty || !model.balanced;
-  const reason = !model.balanced ? "请先修正中间节点流入与流出的差额后再导出" : "";
+  const reason = !model.balanced ? t("warn.exportTitle") : "";
   $("svg-btn").title = reason;
   $("png-btn").title = reason;
-  if (!model.balanced) $("validation-panel").insertAdjacentHTML("beforeend", "<p>已暂停 SVG / PNG 导出，修正差额并重新生成后即可导出。</p>");
+  if (!model.balanced) $("validation-panel").insertAdjacentHTML("beforeend", `<p>${esc(t("warn.exportPaused"))}</p>`);
   updateNodeTools();
   // Restore focus after the rebuild and keep the roving tabindex consistent:
   // exactly one chart element carries tabindex="0", the one holding focus.
@@ -180,8 +197,8 @@ function paintTrace(nodeId) {
   if (!info) { readout.hidden = true; return; }
   // The share is the sentence a reader actually wants: a raw figure does not
   // say whether it matters.
-  const share = info.share === null ? "" : `<span class="trace-share">占收入 ${(info.share * 100).toFixed(1)}%</span>`;
-  const flow = [info.fedBy ? `${info.fedBy} 项流入` : "", info.feeds ? `${info.feeds} 项流出` : ""].filter(Boolean).join(" · ");
+  const share = info.share === null ? "" : `<span class="trace-share">${esc(t("trace.share"))} ${(info.share * 100).toFixed(1)}%</span>`;
+  const flow = [info.fedBy ? `${info.fedBy} ${t("trace.in")}` : "", info.feeds ? `${info.feeds} ${t("trace.out")}` : ""].filter(Boolean).join(" · ");
   readout.innerHTML = `<span class="trace-name">${esc(info.label)}</span><span>${esc(String(fmt(info.value)))} ${esc(info.unit)}</span>${share}${flow ? `<span class="trace-flow">${esc(flow)}</span>` : ""}`;
   readout.hidden = false;
 }
@@ -199,7 +216,7 @@ function updateNodeTools() {
     return;
   }
   const siblings = orderedSiblings(graph, node), index = siblings.findIndex((n) => n.id === selected);
-  $("selected-node").textContent = (node.label ?? selected) + (node.railRole === "main" ? " · 主轨固定" : "");
+  $("selected-node").textContent = (node.label ?? selected) + (node.railRole === "main" ? t("node.mainRail") : "");
   $("node-up").disabled = index === 0;
   $("node-down").disabled = index === siblings.length - 1;
 }
@@ -244,7 +261,7 @@ function bindChart() {
     };
   }
   for (const n of document.querySelectorAll(".flow-hit,.sankey-link")) {
-    const l = graph.links[Number(n.dataset.link)], info = (e) => showTip(e, `${l.source.label} → ${l.target.label}`, `${fmt(l.value)} ${state.config.unit}${l.actualWidth < state.config.minWidth ? " · 细线已增强显示" : ""}`);
+    const l = graph.links[Number(n.dataset.link)], info = (e) => showTip(e, `${l.source.label} → ${l.target.label}`, `${fmt(l.value)} ${state.config.unit}${l.actualWidth < state.config.minWidth ? t("tooltip.thin") : ""}`);
     // Hovering a ribbon traces from its source, which answers "what does this
     // flow feed?" without having to hunt for the node. The trace itself is set
     // by the delegated pointerover handler below, so a ribbon covering a node
@@ -288,7 +305,7 @@ function bindTraceHover() {
 async function importFile(file) {
   if (!file) return;
   if (file.size > 5 * 1024 * 1024) {
-    toast("文件超过 5 MB，请精简后重试。");
+    toast(t("toast.fileTooBig"));
     return;
   }
   try {
@@ -296,22 +313,22 @@ async function importFile(file) {
       state = restoreProject(JSON.parse(await file.text()));
       syncInputs();
       generate();
-      toast("已载入结构化财报 / 项目");
+      toast(t("toast.loadedProject"));
       return;
     }
     let links;
     if (/\.xlsx$/i.test(file.name)) {
-      toast("正在本地读取 Excel…");
+      toast(t("toast.readingExcel"));
       const { readWorkbook } = await import("./excel.js");
       sheets = await readWorkbook(await file.arrayBuffer());
-      if (!sheets.length) throw new Error("工作簿没有可读取的工作表");
+      if (!sheets.length) throw new Error(t("err.noSheets"));
       $("sheet-select").innerHTML = sheets.map((s, i) => `<option value="${i}">${esc(s.name)}</option>`).join("");
       $("sheet-wrap").hidden = sheets.length < 2;
       links = rowsToLinks(sheets[0].rows);
     } else if (/\.(csv|tsv|txt)$/i.test(file.name)) {
       links = parseText(await file.text());
       $("sheet-wrap").hidden = true;
-    } else throw new Error("请选择 CSV、TSV、TXT、XLSX 或 JSON 文件");
+    } else throw new Error(t("err.badType"));
     state.text = toCSV(links);
     state.demo = false;
     // A new file is a new dataset: a title, period, currency or unit inherited
@@ -326,11 +343,11 @@ async function importFile(file) {
     syncInputs();
     if (generate()) {
       $("import-feedback").hidden = false;
-      $("import-feedback").textContent = "已载入 " + file.name + " · " + model.links.length + " 条有效流向";
-      toast("已在本地载入 " + file.name);
+      $("import-feedback").textContent = t("ok.imported", { name: file.name, count: model.links.length });
+      toast(t("ok.loadedName", { name: file.name }));
     }
   } catch (e) {
-    $("input-error").textContent = "导入失败：" + e.message;
+    $("input-error").textContent = t("err.importFailed") + e.message;
     $("input-error").hidden = false;
   } finally {
     $("data-file").value = "";
@@ -403,7 +420,7 @@ for (const [id, key] of [["labels-input", "labels"], ["link-labels-input", "link
 for (const b of document.querySelectorAll("[data-palette]")) b.onclick = () => {
   state.config.palette = b.dataset.palette;
   document.querySelectorAll("[data-palette]").forEach((x) => x.classList.toggle("active", x === b));
-  $("palette-name").textContent = paletteNames[state.config.palette];
+  $("palette-name").textContent = paletteLabel(t, state.config.palette);
   render();
   persist();
 };
@@ -424,7 +441,7 @@ $("chain-input").onchange = (e) => {
   render();
   persist();
 };
-$("sample-options").innerHTML = EXAMPLES.map((x, i) => `<button class="sample-card" data-example="${i}"><span><strong>${esc(x.name)}</strong><small>公开来源 · 载入将替换当前数据</small></span><b>→</b></button>`).join("");
+$("sample-options").innerHTML = EXAMPLES.map((x, i) => `<button class="sample-card" data-example="${i}"><span><strong>${esc(x.name)}</strong><small>${esc(t("sample.note"))}</small></span><b>→</b></button>`).join("");
 $("sample-btn").onclick = () => $("sample-dialog").showModal();
 $("help-btn").onclick = () => $("help-dialog").showModal();
 for (const b of document.querySelectorAll("[data-close]")) b.onclick = () => $(b.dataset.close).close();
@@ -444,9 +461,9 @@ for (const b of document.querySelectorAll("[data-example]")) b.onclick = () => {
   syncInputs();
   generate();
   $("sample-dialog").close();
-  toast("已载入示例");
+  toast(t("toast.sampleLoaded"));
 };
-$("template-btn").onclick = () => download(new Blob(["\uFEFF" + DEFAULT_EXAMPLE.text], { type: "text/csv;charset=utf-8" }), "流账_三列流向模板.csv");
+$("template-btn").onclick = () => download(new Blob(["\uFEFF" + DEFAULT_EXAMPLE.text], { type: "text/csv;charset=utf-8" }), t("template.file"));
 $("data-file").onchange = (e) => importFile(e.target.files[0]);
 $("sheet-select").onchange = () => {
   try {
@@ -477,7 +494,7 @@ for (const name of ["dragleave", "drop"]) $("dropzone").addEventListener(name, (
 });
 $("focus-btn").onclick = () => {
   const active = document.body.classList.toggle("focus-mode");
-  $("focus-btn").textContent = active ? "退出专注 ×" : "专注图表 ↗";
+  $("focus-btn").textContent = active ? t("action.exitFocus") : t("action.focus");
   if (active) window.scrollTo({ top: 0, behavior: "smooth" });
 };
 $("svg-btn").onclick = () => {
@@ -489,25 +506,25 @@ $("png-btn").onclick = () => {
 };
 $("save-btn").onclick = () => {
   if (dirty && !generate()) {
-    toast("请先修正输入数据，再保存可恢复的项目");
+    toast(t("toast.fixFirst"));
     return;
   }
   state.text = $("data-text").value;
   download(new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }), fileName(state.config.title, "json"));
-  toast("项目已保存，包含数据、样式和节点顺序");
+  toast(t("toast.projectSaved"));
 };
 $("open-btn").onclick = () => $("project-file").click();
 $("project-file").onchange = async (e) => {
   const f = e.target.files[0];
   if (!f) return;
   try {
-    if (f.size > 1024 * 1024) throw new Error("项目文件超过 1 MB");
+    if (f.size > 1024 * 1024) throw new Error(t("err.fileTooBig"));
     state = restoreProject(JSON.parse(await f.text()));
     syncInputs();
     generate();
-    toast("已恢复项目");
+    toast(t("toast.projectRestored"));
   } catch (error) {
-    toast("打开失败：" + error.message);
+    toast(t("err.openFailed") + error.message);
   } finally {
     e.target.value = "";
   }
@@ -523,7 +540,7 @@ $("reset-order-btn").onclick = () => {
   selected = null;
   render();
   persist();
-  toast("已恢复原始节点顺序");
+  toast(t("toast.orderReset"));
 };
 $("details-btn").onclick = () => {
   const open = $("details-body").hidden;
@@ -531,6 +548,30 @@ $("details-btn").onclick = () => {
   $("details-btn").setAttribute("aria-expanded", open);
   $("details-arrow").textContent = open ? "－" : "＋";
 };
+/* The language switch re-applies chrome text and re-renders, because the status
+line, badges and trace readout are built in JS rather than living in markup. */
+const langBtn = $("lang-btn");
+if (langBtn) {
+  langBtn.onclick = () => {
+    lang = lang === "en" ? "zh" : "en";
+    t = translator(lang);
+    try {
+      localStorage.setItem(LANG_KEY, lang);
+    } catch {
+      /* storage blocked: the choice lasts for this visit only */
+    }
+    langBtn.textContent = t("lang.switch");
+    langBtn.setAttribute("aria-label", t("lang.label"));
+    applyChrome();
+    // syncInputs re-labels controls built in JS (the palette name and the
+    // finance quick-form fields); render refreshes the status line and badges.
+    syncInputs();
+    render();
+  };
+  langBtn.textContent = t("lang.switch");
+  langBtn.setAttribute("aria-label", t("lang.label"));
+}
+applyChrome();
 try {
   const local = localStorage.getItem(STORAGE_KEY);
   if (local) state = restoreProject(JSON.parse(local));
