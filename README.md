@@ -1,36 +1,38 @@
-# 流账 · 财报桑基图生成器
+# 流账 · Financial Sankey Studio
 
-纯静态中文工作台与独立 JavaScript API。数据只在本机处理，没有外部 API、账号连接、分析追踪或 CDN。输入规范化后的任意公司财报，或三列流向数据；不自动读取 PDF、OCR 或散乱自然语言。
+A pure-static financial-sankey workbench **and** a standalone JavaScript API. Data is processed only on your machine — no external API, no account link, no analytics, no CDN. Feed it a normalized financial statement, or three-column flow data; it does not read PDFs, run OCR, or parse free-form prose.
 
 <p align="center">
-  <img src="docs/images/workspace.png" width="880" alt="工作台：左侧粘贴三列流向数据，右侧 SpaceX 2026 Q3 利润流向桑基图，底部标注来源与守恒校验结果">
+  <img src="docs/images/workspace.png" width="880" alt="Workbench: paste three-column flow data on the left, a SpaceX 2026 Q3 profit-flow sankey on the right, with source attribution and a conservation check at the bottom">
 </p>
 
-上图是载入 SpaceX 2026 Q3 官方财报后的默认状态：营收从左汇入，成本与费用向下流出，净利润靠右；绿色是额外收益。图下注明数据来源与口径，底部状态条给出「流向平衡 · 17 个节点 · 16 条流向」的守恒结论。
+The image above is the default state after loading SpaceX's official 2026 Q3 statement: revenue flows in from the left, cost and expenses flow down, net income sits on the right; green marks extra income. The source and basis are noted under the chart, and the status bar states the conservation result ("flows balanced · 17 nodes · 16 links").
 
-- [财报数据规范](docs/financial-format.md)：显式 role / stage / mainChain 与利润表阶段定义。
-- [API、CLI 与模块边界](docs/api.md)：无需打开页面即可输出 SVG。
-- [本地运行与源码说明](docs/local-setup.md)：版本溯源、离线运行、数据不随源码迁移的边界。
-- [外置官方样例](examples/)：SpaceX 2026 Q3、Meta 2026 Q3 与 Anthropic 2026 H1（S-1）。来源与计算说明随图导出，不参与核心逻辑。
+- [Financial data format](docs/financial-format.md): explicit role / stage / mainChain and income-statement stage definitions.
+- [API, CLI and module boundaries](docs/api.md): output SVG without opening the page.
+- [Local run & source notes](docs/local-setup.md): version provenance, running offline, and the boundary that saved projects do not travel with the source.
+- [External official samples](examples/): SpaceX 2026 Q3, Meta 2026 Q3 and Anthropic 2026 H1 (S-1). Source and calculation notes are exported with the figure and are not part of the core logic.
 
-## 使用
+## Usage
 
-Node.js 22+：`npm ci`、`npm test`、`npm run build`。静态产物在 `dist/`。
+Node.js 22+: `npm ci`, `npm test`, `npm run build`. Static output is in `dist/`.
 
 ```sh
 node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.svg
 ```
 
-页面支持 CSV / TSV 粘贴上传、XLSX 多工作表、两种结构化财报 JSON、本地项目保存、SVG / PNG 导出、纯色与渐变、显示增强最小线宽及关闭选项。
+The page supports CSV / TSV paste upload, multi-sheet XLSX, two structured statement JSON formats, local project save, SVG / PNG export, solid and gradient ribbons, an adjustable minimum display line width, and an option to disable enhancement.
 
-## 诚实的数据边界
+## Honest data boundaries
 
-三列表只接受非负无环流向。规范化财报可明确建模税收收益、负调整与经营/净亏损；亏损使用有说明的非现金会计差额桥，不是额外收入。缺失、混币种/单位、无法精确保留的十进制总和均明确报错，不取绝对值掩盖问题，不偷偷补数或换汇。不平衡可预览，必须修正后才能导出。
+The three-column table accepts only non-negative, acyclic flows. A normalized statement can model tax benefits, negative adjustments and operating / net loss explicitly; a loss uses a documented non-cash accounting bridge, not extra income. Missing values, mixed currencies/units, or decimal sums that cannot be preserved exactly all raise an explicit error — it never takes absolute values to hide a problem, and never silently balances or converts. An imbalance is previewable but must be corrected before export.
 
-旧 JSON 数据、配色与明确自动布局选择保留。最近项目仍缓存在原浏览器 localStorage 键中；打开或导入不会上传其内容。
+Legacy JSON data, colours and an explicit auto-layout choice are preserved. Recent projects still live under the original browser localStorage key; opening or importing never uploads their contents.
 
-## 验证
+## Verification
 
-保留 v10 全部节点/流带几何快照，上沿输出、窄直角矩形、真实比例、自然左右分支和细线显示均做回归。测试包括多种合成财报结构、重命名语义不变、亏损恢复、小数、零值、混合币种、异常守恒、恶意文本、项目读写、CSV/XLSX、CLI 和 UI。合成数据只在 `fixtures/` 用于测试，不作为页面公司示例；`fixtures/us/` 收录六份经 SEC EDGAR XBRL 渲染报表逐行核验的真实美股财报（Apple、Microsoft、NVIDIA、Alphabet、Amazon、Intel），同样只作测试输入，派生/残差行项在各文件 notes 中明确标注。
+All v10 node / ribbon geometry snapshots are kept, with regressions for the top-edge output, narrow right-angle rectangles, true proportions, natural left/right branching and thin-line display. Tests cover many synthetic statement structures, that renaming does not change semantics, loss recovery, decimals, zero values, mixed currencies, broken-conservation cases, hostile text, project read/write, CSV/XLSX, the CLI and the UI. Synthetic data lives only in `fixtures/` for tests and is never used as an on-page company example; `fixtures/us/` holds six real US-statement reports verified line-by-line against SEC EDGAR XBRL-rendered statements (Apple, Microsoft, NVIDIA, Alphabet, Amazon, Intel), used only as test input, with derived / residual line items clearly labelled in each file's notes.
 
-`src/core/index.js` 是唯一的公共 API。源码与构建产物按小步提交并同步远端，静态包与保存版本使用相同 commit。
+`src/core/index.js` is the only public API. Source and build output are committed in small, synchronised steps; the static package and the saved version use the same commit.
+
+中文说明见 [README.zh-CN.md](README.zh-CN.md)。

@@ -24,7 +24,8 @@
   },
   "tracked_files_sha256": {
     ".gitignore": "74253952938e0d75c930af82a0ed4284319ea9c2a79701cd518713c5bea30fb3",
-    "README.md": "5db2d2fd7c0dcd81f019ed18e311b5f767eac34160477be62e3856b69d64c1b2",
+    "README.md": "ebd1bfdd83001b1bcf1b4d8450b168276740e95a6d7e0b7065817ce221c8a754",
+    "README.zh-CN.md": "38bcbd4824dd64110004511ca4987e0f8fe111a4c99109cb8cf88defb4cce49f",
     "dist/api.md": "7ca7726aa4851da7c960025a8d3bacae53f855c1502f0fa8f93ea05b7b1f328f",
     "dist/app.js": "7837591b7ffb2bf800f6b0e50e5ee961b62d4c62948148c9fe458beffb9a97f1",
     "dist/excel.js": "dbf51f5b5d2afc22b28275b049b75b7cf8364e7250933f37699f79892a99e4aa",
