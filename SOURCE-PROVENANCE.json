@@ -10,7 +10,8 @@
     "applied_at_utc": "2026-10-27",
     "basis": "Derived from the v15 export above; the deployed site has NOT been updated.",
     "summary": "Presentation, interaction, accessibility and structure work, plus removal of all compatibility layers: mixed-script label wrapping, unified net-income colouring, single zero-flow statement with detail visibility, spreadsheet trailing-cell tolerance, footer space reserved before layout, label collision resolution verified against real font metrics, tab switching no longer invalidates a valid chart, keyboard focus restored after re-render, headline reset when the dataset changes, single-flow charts no longer stretched full-canvas, app.js decomposed into browser/{feedback,session,panels}.js, one-tab-stop chart with arrow-key roving focus, causal path tracing on hover, roles corrected for assistive tech. Removed: src/model.js, src/report.js, src/financial-layout.js, src/semantic-theme.js and src/legacy/ compatibility facades, the v1 project migration branch, layoutRevision/layoutMigrated/reportId migration fields, unused exports (visibleWidth, matchLegacyExample), and all comments narrating earlier builds. src/core/index.js is now the only public API.",
-    "deployed": false
+    "deployed": false,
+    "docs_reorganized": "2026-10-29: README-本地运行.md folded into docs/local-setup.md"
   },
   "validation": {
     "node": "v24.22.1",
@@ -23,7 +24,6 @@
   },
   "tracked_files_sha256": {
     ".gitignore": "74253952938e0d75c930af82a0ed4284319ea9c2a79701cd518713c5bea30fb3",
-    "README-本地运行.md": "3ff9a653dfaa88ce140139e71ab316f68456c48fb58cf91da455cfe83172b194",
     "README.md": "5db2d2fd7c0dcd81f019ed18e311b5f767eac34160477be62e3856b69d64c1b2",
     "dist/api.md": "7ca7726aa4851da7c960025a8d3bacae53f855c1502f0fa8f93ea05b7b1f328f",
     "dist/app.js": "7837591b7ffb2bf800f6b0e50e5ee961b62d4c62948148c9fe458beffb9a97f1",
@@ -33,6 +33,7 @@
     "dist/style.css": "50a527290b5dec3ad0e7bda8075d378717f267c4ec0a3f8699e47203ba1531aa",
     "docs/api.md": "7ca7726aa4851da7c960025a8d3bacae53f855c1502f0fa8f93ea05b7b1f328f",
     "docs/financial-format.md": "028994c81d51d2e2953e5958ec291332d26be2bd80688279d206c72a61523aaf",
+    "docs/local-setup.md": "0dc7cb6168e094692b71ebf10bc869d64d95a2a88e538caf10ba7995401b9b3e",
     "examples/anthropic-2026-h1.json": "e8e5db4c84e8d6ba8f3c959f73d4504eff45f01f417f4c6b66a1a23c487d6635",
     "examples/meta-2026-q3.json": "5b758e60a2db611706a03c7808bbde4c7a40c5e55d01c09f75e873c431ca5bea",
     "examples/spacex-2026-q3.json": "4cd0a1971e54b5f4d3e56bc3faa9e3d0b72ef9d353072e91b84449f2e9acbef1",

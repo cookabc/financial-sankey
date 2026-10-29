@@ -10,6 +10,7 @@
 
 - [财报数据规范](docs/financial-format.md)：显式 role / stage / mainChain 与利润表阶段定义。
 - [API、CLI 与模块边界](docs/api.md)：无需打开页面即可输出 SVG。
+- [本地运行与源码说明](docs/local-setup.md)：版本溯源、离线运行、数据不随源码迁移的边界。
 - [外置官方样例](examples/)：SpaceX 2026 Q3、Meta 2026 Q3 与 Anthropic 2026 H1（S-1）。来源与计算说明随图导出，不参与核心逻辑。
 
 ## 使用
