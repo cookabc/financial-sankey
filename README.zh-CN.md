@@ -16,6 +16,8 @@
 ## 使用
 
 Node.js 22+：`npm ci`、`npm test`、`npm run build`。静态产物在 `dist/`。
+`npm run verify:labels` 会在无头 Chrome 里加载构建后的 `dist/`，验证九种状态下标签
+既不相撞也不越出画布；运行前需先在 8123 端口起一个静态服务。
 
 ```sh
 node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.svg

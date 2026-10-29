@@ -16,6 +16,9 @@ The image above is the default state after loading SpaceX's official 2026 Q3 sta
 ## Usage
 
 Node.js 22+: `npm ci`, `npm test`, `npm run build`. Static output is in `dist/`.
+`npm run verify:labels` renders the built `dist/` in headless Chrome and asserts that
+no label collides or leaves the canvas across nine states; serve `dist/` on port 8123
+before running it.
 
 ```sh
 node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.svg
