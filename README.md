@@ -1,6 +1,6 @@
 # 流账 · Financial Sankey Studio
 
-A pure-static financial-sankey workbench **and** a standalone JavaScript API. Data is processed only on your machine — no external API, no account link, no analytics, no CDN. Feed it a normalized financial statement, or three-column flow data; it does not read PDFs, run OCR, or parse free-form prose.
+A pure-static financial-sankey workbench **and** a standalone JavaScript API. The interface opens in English with a switch to Chinese in the top bar. Data is processed only on your machine — no external API, no account link, no analytics, no CDN. Feed it a normalized financial statement, or three-column flow data; it does not read PDFs, run OCR, or parse free-form prose.
 
 <p align="center">
   <img src="docs/images/workspace.png" width="880" alt="Workbench: paste three-column flow data on the left, a SpaceX 2026 Q3 profit-flow sankey on the right, with source attribution and a conservation check at the bottom">
