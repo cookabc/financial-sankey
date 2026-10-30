@@ -37,4 +37,8 @@ node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.sv
 
 `src/core/index.js` 是唯一的公共 API。源码与构建产物按小步提交并同步远端，静态包与保存版本使用相同 commit。
 
+## 许可
+
+MIT，见 [LICENSE](LICENSE)。
+
 English readme: [README.md](README.md).

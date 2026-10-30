@@ -36,7 +36,7 @@ Existing project data lives in the original browser's localStorage at the origin
 
 ## Licence
 
-The original repository provided no standalone project LICENSE file; this package does not grant a new open-source licence of its own. Third-party licence comments in the build output are preserved; dependencies installed by `npm ci` carry their own licences.
+MIT — see [LICENSE](../LICENSE). It covers the code in this repository. Third-party licence comments in the build output are preserved, and dependencies installed by `npm ci` carry their own licences.
 
 ---
 

@@ -38,4 +38,8 @@ All v10 node / ribbon geometry snapshots are kept, with regressions for the top-
 
 `src/core/index.js` is the only public API. Source and build output are committed in small, synchronised steps; the static package and the saved version use the same commit.
 
+## Licence
+
+MIT, see [LICENSE](LICENSE).
+
 中文说明见 [README.zh-CN.md](README.zh-CN.md)。
