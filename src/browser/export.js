@@ -17,7 +17,7 @@ function svgBlob(diagram) {
 }
 async function pngBlob(diagram) {
   await document.fonts?.ready;
-  const { width: w, height: h } = diagram, url = URL.createObjectURL(svgBlob(diagram));
+  const url = URL.createObjectURL(svgBlob(diagram));
   try {
     const image = new Image();
     await new Promise((resolve, reject) => {
@@ -25,6 +25,8 @@ async function pngBlob(diagram) {
       image.onerror = () => reject(new Error("图表图片转换失败"));
       image.src = url;
     });
+    // Label/footnote clearance can extend the rendered SVG beyond layout height.
+    const w = image.naturalWidth || diagram.width, h = image.naturalHeight || diagram.height;
     const canvas = document.createElement("canvas"), scale = Math.min(2, Math.sqrt(16e6 / (w * h)));
     canvas.width = Math.round(w * scale);
     canvas.height = Math.round(h * scale);
@@ -47,7 +49,7 @@ function exportSvg(diagram, title, announce, messages = {}) {
     download(svgBlob(diagram), filename(title, "svg"));
     announce?.(messages.success ?? "已导出可编辑的矢量 SVG");
   } catch (e) {
-    announce?.((messages.failure ?? "导出失败：") + e.message);
+    announce?.((messages.failure ?? "导出失败：") + (messages.formatError?.(e.message) ?? e.message));
   }
 }
 async function exportPng(diagram, title, { button, announce, messages = {} } = {}) {
@@ -62,7 +64,7 @@ async function exportPng(diagram, title, { button, announce, messages = {} } = {
     download(result.blob, filename(title, "png"));
     announce?.(messages.success?.(result.width, result.height) ?? `已导出 ${result.width} × ${result.height} PNG`);
   } catch (e) {
-    announce?.((messages.failure ?? "导出失败：") + e.message);
+    announce?.((messages.failure ?? "导出失败：") + (messages.formatError?.(e.message) ?? e.message));
   } finally {
     if (button) {
       button.disabled = previous.disabled;

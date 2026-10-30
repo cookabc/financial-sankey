@@ -1,16 +1,30 @@
 /**
  * UI text for the workbench chrome.
  *
- * English is the default language; Chinese is one switch away. Only interface
- * copy lives here — data labels, node names and validation messages produced by
- * the pure core stay exactly as the data defines them, so an exported chart is
- * identical whichever language the chrome is in.
+ * English is the default language; Chinese is one switch away. Application copy lives here. Built-in sample presentation and diagnostics
+ * follow the selected language; user-supplied data remains unchanged.
  */
 export const LANG_KEY = "liuzhang-lang";
 export const LANGS = ["en", "zh"];
 
 const dict = {
   en: {
+    "input.mode": "Data input mode",
+    "input.columns": "Source, target and amount — three columns",
+    "placeholder.currency": "e.g. CNY / USD",
+    "placeholder.chain": "Revenue → Gross profit → Profit",
+    "source.link": "Source ↗",
+    "rows.active": "{count} active flows",
+    "rows.zero": " · {count} zero-valued",
+    "finance.revenue": "Revenue",
+    "finance.cost": "Cost of revenue",
+    "finance.sales": "Selling expenses",
+    "finance.rnd": "Research and development",
+    "finance.admin": "Administrative expenses",
+    "finance.finance": "Finance costs",
+    "finance.tax": "Income tax (negative for a benefit)",
+    "warn.balance": "“{node}”: inflow {in}, outflow {out}, gap {diff} {unit}.",
+
     "doc.title": "Liuzhang · Financial Sankey Studio",
     "doc.description":
       "Turn financial data into clear, readable sankey charts. Local processing, CSV / TSV / Excel import, SVG and PNG export.",
@@ -150,6 +164,22 @@ const dict = {
     "misc.unspecified": "Unspecified",
   },
   zh: {
+    "input.mode": "数据输入方式",
+    "input.columns": "来源、去向、金额三列数据",
+    "placeholder.currency": "例如 CNY / USD",
+    "placeholder.chain": "收入 → 毛利润 → 净利润",
+    "source.link": "来源 ↗",
+    "rows.active": "{count} 条已生效",
+    "rows.zero": " · {count} 条零值",
+    "finance.revenue": "营业收入",
+    "finance.cost": "营业成本",
+    "finance.sales": "销售费用",
+    "finance.rnd": "研发费用",
+    "finance.admin": "管理费用",
+    "finance.finance": "财务费用",
+    "finance.tax": "所得税（收益填负数）",
+    "warn.balance": "「{node}」流入 {in}，流出 {out}，差额 {diff} {unit}。",
+
     "doc.title": "流账 · 财报桑基图工作台",
     "doc.description": "把财务数据变成清晰、漂亮的桑基图。本地处理，支持 CSV、TSV、Excel 导入及 SVG、PNG 导出。",
     "brand.name": "流账",

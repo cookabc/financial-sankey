@@ -13,6 +13,8 @@ The image above is the default state after loading SpaceX's official 2026 Q3 sta
 - [Local run & source notes](docs/local-setup.md) · [中文](docs/local-setup.zh-CN.md): version provenance, running offline, and the boundary that saved projects do not travel with the source.
 - [External official samples](examples/): SpaceX 2026 Q3, Meta 2026 Q3 and Anthropic 2026 H1 (S-1). Source and calculation notes are exported with the figure and are not part of the core logic.
 
+The interface defaults to English and offers Chinese in the header. Controls, diagnostics, built-in sample labels, source notes and exported SVG/PNG follow the selected language. Imported names, IDs, amounts and custom notes remain unchanged; the raw data editor and main-chain field show the original IDs. Language changes do not rewrite saved projects.
+
 ## Usage
 
 Use Node.js 24.x (the exact local version is in `.nvmrc`) and npm. Run `npm ci`, then `npm run dev` and open **http://127.0.0.1:4183/**. Vite reloads source edits automatically. `npm run check` runs ESLint, the Node test suite and the production build with release checks. `npm run preview` serves the built `dist/`; stop either server with Ctrl+C.

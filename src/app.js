@@ -1,3 +1,4 @@
+import {ownedText, presentReport, headlineValue, localizeDiagnostic} from './browser/presentation.js';
 import { rowsToLinks, toCSV } from "./core/table-data.js";
 import { layoutFinancialGraph } from "./core/layout.js";
 import { renderSvg } from "./core/render-svg.js";
@@ -13,20 +14,36 @@ import { detectLang, LANG_KEY, paletteLabel, translator } from "./browser/i18n.j
 import { createImportCoordinator } from "./browser/import.js";
 const $ = (id) => document.getElementById(id);
 
-/* Interface language. English is the default; the switch flips it and persists
-the choice. Only chrome copy changes — data labels and core validation messages
-keep whatever the data says, so an exported chart is language-independent. */
+/* Interface copy and built-in samples follow the selected language. User data is preserved. */
 let lang = detectLang();
 let t = translator(lang);
 
+function showInputError(message, prefix='') {
+ const panel=$('input-error');panel.dataset.message=message;panel.dataset.prefix=prefix;
+ panel.textContent=(prefix?t(prefix):'')+localizeDiagnostic(message,lang);panel.hidden=false;
+}
 function applyChrome() {
   document.documentElement.lang = lang;
+  const panel=$('input-error');
+  if(panel?.dataset.message&&!panel.hidden)showInputError(panel.dataset.message,panel.dataset.prefix);
   const title = t("doc.title");
   document.title = title;
   const meta = document.querySelector('meta[name="description"]');
   if (meta) meta.setAttribute("content", t("doc.description"));
   for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
   for (const el of document.querySelectorAll("[data-i18n-aria]")) el.setAttribute("aria-label", t(el.dataset.i18nAria));
+  for (const el of document.querySelectorAll('[data-i18n-placeholder]')) el.setAttribute('placeholder',t(el.dataset.i18nPlaceholder));
+  for (const button of document.querySelectorAll('[data-palette]')) {
+    const label=paletteLabel(t,button.dataset.palette);button.setAttribute('aria-label',label);button.title=label;
+  }
+  for (const key of Object.keys(FINANCE_FIELDS)) {
+    const input=$('f-'+key);if(!input)continue;
+    const label=t('finance.'+key);input.setAttribute('aria-label',label);input.previousElementSibling.textContent=label;
+  }
+  for (const [i, sample] of EXAMPLES.entries()) {
+    const button=document.querySelector('[data-example="'+i+'"]');
+    if(button){button.querySelector('strong').textContent=ownedText(sample.name,lang);button.querySelector('small').textContent=t('sample.note');}
+  }
   // The guide's two doc links ship in both languages, so each points at the
   // edition matching the interface rather than always at the English one.
   for (const el of document.querySelectorAll("[data-doc-en]")) {
@@ -76,7 +93,7 @@ function markDirty() {
 function syncInputs() {
   $("data-text").value = state.text;
   for (const key of Object.keys(FINANCE_FIELDS)) $("f-" + key).value = state.finance[key];
-  for (const key of ["title", "period", "currency", "unit", "size", "ribbon"]) $(key + "-input").value = state.config[key];
+  for (const key of ["title", "period", "currency", "unit", "size", "ribbon"]) $(key + "-input").value = ["title","period","currency","unit"].includes(key) ? headlineValue(state,key,lang) : state.config[key];
   $("chain-input").value = mainChain().join(" → ");
   $("min-width-input").value = String(state.config.minWidth);
   $("chain-settings").hidden = state.mode === "finance";
@@ -98,13 +115,12 @@ function generate() {
     selected = null;
     render();
     state.order = state.order.filter((id) => model.nodes.some((n) => n.id === id));
-    renderDetails(model, state.config.unit);
+    renderDetails(model, diagram.config.unit, t);
     persist();
     return true;
   } catch (error) {
     markDirty();
-    $("input-error").textContent = error.message;
-    $("input-error").hidden = false;
+    showInputError(error.message);
     return false;
   }
 }
@@ -119,10 +135,10 @@ function render() {
   const metadata = { ...report.metadata, title: state.config.title, period: state.config.period || t("period.unspecified"), currency: state.config.currency || t("misc.unspecified"), unit: state.config.unit || t("misc.unspecified") };
   const sourceBasis = ["period", "currency", "unit"].every((k) => metadata[k] === report.metadata[k]);
   if (!sourceBasis) delete metadata.source;
-  const current = { ...report, metadata };
-  diagram = layoutFinancialGraph(current, { ...state.config, mainChain: state.mode === "finance" ? report.mainChain : state.config.mainChain, order: state.order });
+  const current = presentReport({ ...report, metadata }, {lang,finance:state.mode === "finance",defaults:!state.document});
+  diagram = layoutFinancialGraph(current, { ...state.config, ...Object.fromEntries(["title","period","unit","currency"].map(key=>[key,current.metadata[key]])), lang, mainChain: state.mode === "finance" ? report.mainChain : state.config.mainChain, order: state.order });
   ({ model, graph } = diagram);
-  $("chart-stage").innerHTML = renderSvg(diagram, { interactive: true, selected });
+  $("chart-stage").innerHTML = renderSvg(diagram, { interactive: true, selected, lang });
   const rail = diagram.rail;
   // When the report itself has no main chain (loss or zero balance), demanding
   // that one be configured contradicts the note beside it explaining that the
@@ -133,13 +149,15 @@ function render() {
   // The report's own notes are drawn into the SVG footer, which is what gets
   // exported. Repeating them in the page banner above the chart said the same
   // thing twice on screen, so the banner carries only the layout explanation.
-  $("layout-note").textContent = railNote;
+  $("layout-note").textContent = localizeDiagnostic(railNote,lang);
   $("layout-note").hidden = !$("layout-note").textContent.trim();
   $("layout-note").classList.toggle("warning", Boolean(railNote));
   $("chain-settings").hidden = state.mode === "finance";
   $("chain-input").disabled = state.mode === "finance";
   $("demo-badge").textContent = metadata.source ? t("badge.sourced") : state.demo ? t("badge.demo") : t("badge.custom");
-  renderSource(metadata.source);
+  renderSource(current.metadata.source,t);
+  paintTrace(null);
+  hideTip();
   bindChart();
   bindTraceHover();
   $("chart-status").textContent = `${model.balanced ? t("status.balanced") : t("status.unbalanced")} · ${model.nodes.length} ${t("status.nodes")} · ${model.links.length} ${t("status.links")}`;
@@ -149,7 +167,7 @@ function render() {
   // dropping the duplicate keeps one statement per fact in the panel.
   const warnings = [...model.warnings, ...(report.warnings ?? []).filter((w) => w.type !== "balance" && w.type !== "zero" && w.code !== "zero-links")];
   $("validation-panel").hidden = !warnings.length;
-  $("validation-panel").innerHTML = warnings.length ? `<strong>${model.balanced ? esc(t("warn.heading")) : esc(t("warn.headingBad"))}</strong><ul>${warnings.map((w) => `<li>${w.type === "balance" ? `「${esc(w.node)}」流入 ${fmt(w.in)}，流出 ${fmt(w.out)}，差额 ${fmt(w.diff)} ${esc(state.config.unit)}。` : esc(w.message)}</li>`).join("")}</ul>` : "";
+  $("validation-panel").innerHTML = warnings.length ? `<strong>${model.balanced ? esc(t("warn.heading")) : esc(t("warn.headingBad"))}</strong><ul>${warnings.map((w) => `<li>${w.type === "balance" ? esc(t("warn.balance",{node:model.nodes.find(n=>n.id===w.node)?.label??w.node,in:fmt(w.in),out:fmt(w.out),diff:fmt(w.diff),unit:diagram.config.unit})) : esc(localizeDiagnostic(w.message,lang))}</li>`).join("")}</ul>` : "";
   $("svg-btn").disabled = dirty || !model.balanced;
   $("png-btn").disabled = pngPending || dirty || !model.balanced;
   const reason = !model.balanced ? t("warn.exportTitle") : "";
@@ -201,7 +219,7 @@ function paintTrace(nodeId) {
     readout.textContent = "";
     return;
   }
-  const info = describeTrace(graph, nodeId, state.config.unit);
+  const info = describeTrace(graph, nodeId, diagram.config.unit);
   if (!info) { readout.hidden = true; return; }
   // The share is the sentence a reader actually wants: a raw figure does not
   // say whether it matters.
@@ -269,7 +287,7 @@ function bindChart() {
     };
   }
   for (const n of document.querySelectorAll(".flow-hit,.sankey-link")) {
-    const l = graph.links[Number(n.dataset.link)], info = (e) => showTip(e, `${l.source.label} → ${l.target.label}`, `${fmt(l.value)} ${state.config.unit}${l.actualWidth < state.config.minWidth ? t("tooltip.thin") : ""}`);
+    const l = graph.links[Number(n.dataset.link)], info = (e) => showTip(e, `${l.source.label} → ${l.target.label}`, `${fmt(l.value)} ${diagram.config.unit}${l.actualWidth < state.config.minWidth ? t("tooltip.thin") : ""}`);
     // Hovering a ribbon traces from its source, which answers "what does this
     // flow feed?" without having to hunt for the node. The trace itself is set
     // by the delegated pointerover handler below, so a ribbon covering a node
@@ -335,8 +353,7 @@ function commitImport(result, file) {
 const importer = createImportCoordinator({
   commit: commitImport,
   onError(error) {
-    $("input-error").textContent = t("err.importFailed") + error.message;
-    $("input-error").hidden = false;
+    showInputError(error.message,"err.importFailed");
   },
   onPending(pending) { $("editor").setAttribute('aria-busy', String(pending)); },
 });
@@ -348,7 +365,7 @@ async function importFile(file, options) {
   $("project-file").value = '';
 }
 const financeLabels = FINANCE_FIELDS;
-$("finance-fields").innerHTML = Object.entries(financeLabels).map(([key, label]) => `<label class="field">${label}<input id="f-${key}" inputmode="decimal" value="${""}" aria-label="${label}"></label>`).join("");
+$("finance-fields").innerHTML = Object.keys(financeLabels).map((key) => `<label class="field"><span>${t("finance."+key)}</span><input id="f-${key}" inputmode="decimal" value="${""}" aria-label="${t("finance."+key)}"></label>`).join("");
 for (const key of Object.keys(FINANCE_FIELDS)) $("f-" + key).addEventListener("input", (e) => {
   state.finance[key] = e.target.value;
   state.demo = false;
@@ -380,11 +397,10 @@ function switchMode(mode) {
     $("input-error").hidden = true;
     selected = null;
     render();
-    renderDetails(model, state.config.unit);
+    renderDetails(model, diagram.config.unit, t);
     persist();
   } catch (error) {
-    $("input-error").textContent = error.message;
-    $("input-error").hidden = false;
+    showInputError(error.message);
   }
 }
 for (const id of ['data', 'finance']) $(id + '-tab').onkeydown = event => {
@@ -411,7 +427,7 @@ $("data-text").oninput = () => {
 for (const key of ["title", "period", "currency", "unit", "size"]) $(key + "-input").addEventListener(key === "size" ? "change" : "input", (e) => {
   state.config[key] = e.target.value;
   render();
-  renderDetails(model, state.config.unit);
+  renderDetails(model, diagram.config.unit, t);
   persist();
 });
 for (const [id, key] of [["labels-input", "labels"], ["link-labels-input", "linkLabels"]]) $(id).onchange = (e) => {
@@ -443,7 +459,7 @@ $("chain-input").onchange = (e) => {
   render();
   persist();
 };
-$("sample-options").innerHTML = EXAMPLES.map((x, i) => `<button class="sample-card" data-example="${i}"><span><strong>${esc(x.name)}</strong><small>${esc(t("sample.note"))}</small></span><b>→</b></button>`).join("");
+$("sample-options").innerHTML = EXAMPLES.map((x, i) => `<button class="sample-card" data-example="${i}"><span><strong>${esc(ownedText(x.name,lang))}</strong><small>${esc(t("sample.note"))}</small></span><b>→</b></button>`).join("");
 $("sample-btn").onclick = () => $("sample-dialog").showModal();
 $("help-btn").onclick = () => $("help-dialog").showModal();
 for (const b of document.querySelectorAll("[data-close]")) b.onclick = () => $(b.dataset.close).close();
@@ -482,8 +498,7 @@ $("sheet-select").onchange = () => {
     syncInputs();
     generate();
   } catch (e) {
-    $("input-error").textContent = e.message;
-    $("input-error").hidden = false;
+    showInputError(e.message);
   }
 };
 for (const name of ["dragenter", "dragover"]) $("dropzone").addEventListener(name, (e) => {
@@ -501,15 +516,15 @@ $("focus-btn").onclick = () => {
   if (active) window.scrollTo({ top: 0, behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 };
 $("svg-btn").onclick = () => {
-  if (!dirty && model.balanced) exportSvg(diagram, state.config.title, toast, { success: t('export.svgDone'), failure: t('export.failed') });
+  if (!dirty && model.balanced) exportSvg(diagram, diagram.config.title, toast, { success: t('export.svgDone'), failure: t('export.failed'), formatError: message=>localizeDiagnostic(message,lang) });
 };
 $("png-btn").onclick = async () => {
   if (pngPending || dirty || !model.balanced) return;
   pngPending = true;
   try {
-    await exportPng(diagram, state.config.title, {
+    await exportPng(diagram, diagram.config.title, {
       button: $("png-btn"), announce: toast,
-      messages: { pending: t('export.pending'), success: (width, height) => t('export.pngDone', { width, height }), failure: t('export.failed') },
+      messages: { pending: t('export.pending'), success: (width, height) => t('export.pngDone', { width, height }), failure: t('export.failed'), formatError: message=>localizeDiagnostic(message,lang) },
     });
   } finally {
     pngPending = false;
@@ -568,6 +583,8 @@ if (langBtn) {
     // finance quick-form fields); render refreshes the status line and badges.
     syncInputs();
     render();
+    if(model)renderDetails(model,diagram.config.unit,t);
+    hideTip();
   };
   langBtn.textContent = t("lang.switch");
   langBtn.setAttribute("aria-label", t("lang.label"));

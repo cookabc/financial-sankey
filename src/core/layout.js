@@ -40,7 +40,7 @@ function layoutFinancialGraph(report, options = {}) {
   // The footer note block is measured before layout so nodes are never placed
   // on top of it. Growing the canvas afterwards left the chart free to overlap
   // its own footnotes in auto layout.
-  const source = report.metadata.source, footnotes = source?.footnotes?.length ? source.footnotes : [source ? `来源：${source.title}${source.publishedAt ? " · " + source.publishedAt : ""}` : "", source?.notes, source?.url].filter(Boolean);
+  const source = report.metadata.source, footnotes = source?.footnotes?.length ? source.footnotes : [source ? `${config.lang === "en" ? "Source: " : "来源："}${source.title}${source.publishedAt ? " · " + source.publishedAt : ""}` : "", source?.notes, source?.url].filter(Boolean);
   const noteLines = [...footnotes, ...report.notes ?? []].flatMap((t) => wrap(t, Math.floor((width - 88) / 17)));
   const noteRows = Math.max(3, noteLines.length), footer = 58 + noteRows * 25;
   const depths = /* @__PURE__ */ new Map();

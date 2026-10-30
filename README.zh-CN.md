@@ -13,6 +13,8 @@
 - [本地运行与源码说明](docs/local-setup.zh-CN.md)（[English](docs/local-setup.md)）：版本溯源、离线运行，以及已保存项目不随源码迁移的边界。
 - [外置官方样例](examples/)：SpaceX 2026 Q3、Meta 2026 Q3 与 Anthropic 2026 H1（S-1）。来源与计算说明随图导出，不参与核心逻辑。
 
+界面默认英文，可在页首切换中文。按钮、校验提示、内置示例标签、来源说明及导出的 SVG/PNG 均跟随所选语言。用户导入的名称、ID、金额与自定义备注原样保留；原始数据编辑器和主链字段显示原始 ID。切换语言不会改写保存的项目。
+
 ## 使用
 
 Node.js 24.x（完整支持范围见 `package.json` 的 `engines`）：`npm ci`、`npm test`、`npm run build`。静态产物在 `dist/`。

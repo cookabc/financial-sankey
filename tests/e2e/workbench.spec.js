@@ -80,3 +80,52 @@ test('320 px layout keeps header actions and editor inside the page', async ({ p
   await page.locator('#dropzone').scrollIntoViewIfNeeded();
   await expect(page.locator('#dropzone')).toBeInViewport();
 });
+
+test('sample presentation, controls and exported chart follow the language without rewriting input',async({page})=>{
+ await page.goto('/');
+ await expect(page.locator('#f-revenue')).toHaveAttribute('aria-label','Revenue');
+ const raw=await page.locator('#data-text').inputValue();
+ for(let index=0;index<9;index++){
+  await page.locator('#sample-btn').click();await page.locator(`[data-example="${index}"]`).click();
+  await expect(page.locator('#sankey')).toBeVisible();
+  expect(await page.locator('#sankey').textContent()).not.toMatch(/[\p{Script=Han}]/u);
+  expect(await page.locator('#source-card').textContent()).not.toMatch(/[\p{Script=Han}]/u);
+ }
+ await page.locator('#sample-btn').click();await page.locator('[data-example="0"]').click();
+ await page.locator('#lang-btn').click();
+ await expect(page.locator('#f-revenue')).toHaveAttribute('aria-label','营业收入');
+ await expect(page.locator('#sankey')).toContainText('成本与费用');
+ await expect(page.locator('#row-count')).toContainText('条已生效');
+ await page.locator('#lang-btn').click();
+ await expect(page.locator('#row-count')).toContainText('active flows');
+ await expect(page.locator('#data-text')).toHaveValue(raw);
+ const pending=page.waitForEvent('download');await page.locator('#svg-btn').click();
+ const file=await pending,svg=await readFile(await file.path(),'utf8');
+ expect(svg).toContain('Costs and expenses');expect(svg).toContain('Liuzhang');
+ await page.locator('#data-text').fill('客户收入,客户利润,10');await page.locator('#generate-btn').click();
+ await expect(page.locator('#sankey')).toContainText('客户收入');
+ const input=await page.locator('#data-text').inputValue();
+ await page.locator('#lang-btn').click();await page.locator('#lang-btn').click();
+ await expect(page.locator('#data-text')).toHaveValue(input);
+ await expect(page.locator('#sankey')).toContainText('客户利润');
+});
+
+test('a visible validation failure changes language with the interface',async({page})=>{
+ await page.goto('/');await page.locator('#finance-tab').click();
+ await expect(page.locator('#input-error')).toContainText('Complete every amount');
+ await page.locator('#lang-btn').click();
+ await expect(page.locator('#input-error')).toContainText('请完整填写金额');
+ await page.locator('#lang-btn').click();
+ await expect(page.locator('#input-error')).toContainText('Complete every amount');
+});
+
+test('a taller English chart keeps its footnotes and PNG aspect ratio',async({page})=>{
+ await page.goto('/');
+ await page.locator('#chain-input').evaluate(input=>{input.value='';input.dispatchEvent(new Event('change'));});
+ const size=await page.locator('#sankey').evaluate(svg=>({width:Number(svg.getAttribute('width')),height:Number(svg.getAttribute('height'))}));
+ const download=page.waitForEvent('download');await page.locator('#png-btn').click();
+ const png=await readFile(await (await download).path());
+ const width=png.readUInt32BE(16),height=png.readUInt32BE(20);
+ expect(width/height).toBeCloseTo(size.width/size.height,2);
+ expect(height).toBe(Math.round(size.height*Math.min(2,Math.sqrt(16e6/(size.width*size.height)))));
+});

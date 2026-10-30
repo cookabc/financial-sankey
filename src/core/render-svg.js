@@ -3,8 +3,9 @@ import { railNodeRect, financialLinkGeometry } from "./top-layout.js";
 import { CLEAR_COLORS, financialRole, clearLinkColor, nodeColor as colorForNode } from "./theme.js";
 import { element as el, fmt, wrap, wrapLabel, textWidth, truncateLine } from "./svg-tree.js";
 const NS = "http://www.w3.org/2000/svg";
-function renderSvg(diagram, { interactive = false, selected = null } = {}) {
+function renderSvg(diagram, { interactive = false, selected = null, lang = diagram.config.lang ?? "zh" } = {}) {
   const { report, config, model, graph, width: w, height: h, rail } = diagram;
+  const tr = (zh,en) => lang === "en" ? en : zh;
   const state = { config, demo: false, mode: report.mainChain.length ? "finance" : "data" }, financial = report.mainChain.length >= 2;
   const nodeColor = (n) => colorForNode(n, config.palette, model.nodes.findIndex((x) => x.id === n.id));
   const clear = state.config.palette === "clear";
@@ -17,16 +18,16 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
   svg.setAttribute("height", h);
   svg.setAttribute("xmlns", NS);
   svg.setAttribute("font-family", "Noto Sans CJK SC, PingFang SC, Microsoft YaHei, sans-serif");
-  svg.setAttribute("aria-label", state.config.title + "，" + model.links.length + " 条流向");
+  svg.setAttribute("aria-label", state.config.title + tr("，", ", ") + model.links.length + tr(" 条流向", " flows"));
   svg.append(el("rect", { width: w, height: h, fill: paper }));
   svg.append(el("title", {}, state.config.title));
-  svg.append(el("desc", {}, `${state.config.period}，单位 ${state.config.unit}。${state.demo ? "演示数据。" : ""}${model.balanced ? "中间节点收支平衡。" : "警告：部分中间节点流入与流出不平衡。"}`));
-  wrap(state.config.title || "财务流向分析", 40).slice(0, 2).forEach((l, i) => svg.append(el("text", { x: 43, y: 62 + i * 35, fill: clear ? "#15191e" : "#59402c", "font-size": financial ? 34 : 28, "font-weight": clear ? 650 : 500, "font-family": clear ? "Noto Sans CJK SC, PingFang SC, sans-serif" : "Noto Serif CJK SC, Songti SC, serif" }, l)));
-  const titleRows = Math.min(2, Math.ceil(Array.from(state.config.title || "财务流向分析").length / 40));
+  svg.append(el("desc", {}, `${state.config.period}${tr("，单位 ", ", unit: ")}${state.config.unit}. ${model.balanced ? tr("中间节点收支平衡。", "Intermediate nodes are balanced.") : tr("警告：部分中间节点流入与流出不平衡。", "Warning: some intermediate nodes are unbalanced.")}`));
+  wrap(state.config.title || tr("财务流向分析", "Financial flow analysis"), 40).slice(0, 2).forEach((l, i) => svg.append(el("text", { x: 43, y: 62 + i * 35, fill: clear ? "#15191e" : "#59402c", "font-size": financial ? 34 : 28, "font-weight": clear ? 650 : 500, "font-family": clear ? "Noto Sans CJK SC, PingFang SC, sans-serif" : "Noto Serif CJK SC, Songti SC, serif" }, l)));
+  const titleRows = Math.min(2, Math.ceil(Array.from(state.config.title || tr("财务流向分析", "Financial flow analysis")).length / 40));
   const subtitleY = titleRows > 1 ? 124 : 94;
-  svg.append(el("text", { x: 43, y: subtitleY, fill: muted, "font-size": financial ? 19 : 13, "letter-spacing": 1 }, `${state.config.period || "未指定期间"}  /  ${report.metadata.currency} · ${state.config.unit || "未指定"}${state.demo ? "  /  演示数据" : ""}`));
+  svg.append(el("text", { x: 43, y: subtitleY, fill: muted, "font-size": financial ? 19 : 13, "letter-spacing": 1 }, `${state.config.period || tr("未指定期间", "Period not specified")}  /  ${report.metadata.currency} · ${state.config.unit || tr("未指定", "Unspecified")}${state.demo ? "  /  演示数据" : ""}`));
   if (clear) {
-    [["来源", CLEAR_COLORS.source], [financial || state.mode === "finance" ? "收入与利润" : "主要流向", CLEAR_COLORS.main], ["成本与费用", CLEAR_COLORS.expense], ["额外收益", CLEAR_COLORS.gain]].forEach(([label, color], i) => {
+    [[tr("来源","Sources"), CLEAR_COLORS.source], [financial || state.mode === "finance" ? tr("收入与利润","Revenue and profit") : tr("主要流向","Main flows"), CLEAR_COLORS.main], [tr("成本与费用","Costs and expenses"), CLEAR_COLORS.expense], [tr("额外收益","Additional gains"), CLEAR_COLORS.gain]].forEach(([label, color], i) => {
       const x = 44 + i * 190;
       svg.append(el("rect", { x, y: subtitleY + 25, width: 11, height: 11, rx: 2, fill: color }));
       svg.append(el("text", { x: x + 21, y: subtitleY + 36, fill: muted, "font-size": 17 }, label));
@@ -146,8 +147,17 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
   }
   // If decluttering ran past the footer, extend the canvas rather than clamp a
   // label back onto its neighbour. A taller canvas keeps every label readable.
-  const deepest = Math.max(...labelPlans.map((plan) => plan.y + plan.blockHeight));
-  const grown = Math.max(0, Math.round(deepest + 24 - h));
+  const source = report.metadata.source;
+  const footnotes = source?.footnotes?.length ? source.footnotes : [source ? `${tr("来源：","Source: ")}${source.title}${source.publishedAt ? " · " + source.publishedAt : ""}` : "", source?.notes, source?.url].filter(Boolean);
+  const notes = [...footnotes, ...report.notes ?? []];
+  const lines = notes.flatMap((t) => wrap(t, Math.floor((w - 88) / 17)));
+  const deepest = Math.max(...labelPlans.map(plan => {
+    const lineHeight = bigLabels ? 28 : 22;
+    const lastBaseline = plan.y + (plan.lines2.length - 1) * lineHeight + (plan.valueText ? lineHeight + 2 : 0);
+    return lastBaseline + (plan.valueText ? bigLabels ? 23 : 15 : bigLabels ? 26 : 16) * .25;
+  }));
+  const notesTop = lines.length ? h - 58 - (lines.length - 1) * 25 - 17 * .86 : h - 40;
+  const grown = Math.max(0, Math.ceil(deepest + 12 - notesTop));
   const height = h + grown;
   if (grown > 0) {
     svg.setAttribute("height", height);
@@ -171,7 +181,7 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
     // the first node) admits Tab; arrow keys walk the rest. A chart with 80
     // nodes must not put 80 stops between the reader and the next control.
     const tabEntry = selected ?? graph.nodes[0]?.id;
-    const color = nodeColor(node), g = el("g", { class: "sankey-node", "data-node": node.id, tabindex: interactive ? (node.id === tabEntry ? 0 : -1) : void 0, role: interactive ? "button" : void 0, "aria-label": `选择${node.label ?? node.id}，${fmt(node.signedValue ?? node.value)} ${state.config.unit}` });
+    const color = nodeColor(node), g = el("g", { class: "sankey-node", "data-node": node.id, tabindex: interactive ? (node.id === tabEntry ? 0 : -1) : void 0, role: interactive ? "button" : void 0, "aria-label": `${tr("选择","Select ")}${node.label ?? node.id}${tr("，",", ")}${fmt(node.signedValue ?? node.value)} ${state.config.unit}` });
     if (node.railPorts) {
       g.append(el("rect", { ...railNodeRect(node), rx: 0, fill: color, opacity: 0.85, stroke: selected === node.id ? "#1a4fa0" : "none", "stroke-width": selected === node.id ? 2.5 : 1, class: node.id === selected ? "is-selected" : undefined, "data-junction-role": "main", "data-junction-value": node.value, "data-rail-top": node.railPorts.top }));
     } else g.append(el("rect", { x: node.x0, y: node.y0, width: 11, height: node.y1 - node.y0, rx: 2, fill: color, stroke: selected === node.id ? "#1a4fa0" : "none", "stroke-width": selected === node.id ? 2.5 : 2 }));
@@ -197,13 +207,10 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
       g.append(el("text", { x: labelX, y: y + 2, "text-anchor": labelAnchor, fill: ink, "font-size": bigLabels ? 23 : 15, "font-family": clear ? "Noto Sans CJK SC, PingFang SC, sans-serif" : "Georgia, serif", ...halo }, valueText));
     }
     nodesG.append(g);
-  });  const source = report.metadata.source;
-  const footnotes = source?.footnotes?.length ? source.footnotes : [source ? `来源：${source.title}${source.publishedAt ? " · " + source.publishedAt : ""}` : "", source?.notes, source?.url].filter(Boolean);
-  const notes = [...footnotes, ...report.notes ?? []];
-  const lines = notes.flatMap((t) => wrap(t, Math.floor((w - 88) / 17)));
+  });
   lines.forEach((line, i) => svg.append(el("text", { x: 44, y: height - 58 - (lines.length - 1 - i) * 25, fill: muted, "font-size": 17 }, line)));
-  if (!model.balanced) svg.append(el("text", { x: 44, y: height - 32, fill: "#b18041", "font-size": 12 }, "⚠ 部分中间节点不平衡，未自动补数；请结合下方校验信息阅读。"));
-  svg.append(el("text", { x: w - 45, y: height - 32, "text-anchor": "end", fill: muted, "font-size": 11, "letter-spacing": 2 }, "流账"));
+  if (!model.balanced) svg.append(el("text", { x: 44, y: height - 32, fill: "#b18041", "font-size": 12 }, tr("⚠ 部分中间节点不平衡，未自动补数；请结合下方校验信息阅读。","⚠ Some intermediate nodes are unbalanced. No balancing amounts are inserted; check the validation notes.")));
+  svg.append(el("text", { x: w - 45, y: height - 32, "text-anchor": "end", fill: muted, "font-size": 11, "letter-spacing": 2 }, tr("流账","Liuzhang")));
   return svg.toString();
 }
 export {

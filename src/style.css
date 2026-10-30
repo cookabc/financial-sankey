@@ -509,3 +509,8 @@ input,textarea{caret-color:var(--focus);}
   .brand{gap:8px;}
   .top-actions .ghost{padding-inline:8px;min-height:44px;}
 }
+/* Longer language editions stay readable in the provenance and status areas. */
+.privacy-text,.field-note,.chart-status,.source-copy p {font-size:12px;}
+.source-copy p {max-width:75ch;}
+.source-title a {color:#365e93;}
+#demo-badge {font-size:11px;}
