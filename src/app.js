@@ -1,4 +1,4 @@
-import { parseText, rowsToLinks, toCSV } from "./core/table-data.js";
+import { rowsToLinks, toCSV } from "./core/table-data.js";
 import { layoutFinancialGraph } from "./core/layout.js";
 import { renderSvg } from "./core/render-svg.js";
 import { fmt, escapeXml as esc } from "./core/svg-tree.js";
@@ -10,6 +10,7 @@ import { describeTrace, tracePath } from "./core/trace.js";
 import { renderDetails, renderSource } from "./browser/panels.js";
 import { HEADLINE_FIELDS, adjacentSibling, canvasOrder, dropInheritedHeadline, orderedSiblings, swapInOrder } from "./browser/session.js";
 import { detectLang, LANG_KEY, paletteLabel, translator } from "./browser/i18n.js";
+import { createImportCoordinator } from "./browser/import.js";
 const $ = (id) => document.getElementById(id);
 
 /* Interface language. English is the default; the switch flips it and persists
@@ -86,6 +87,7 @@ function syncInputs() {
   setMode(state.mode);
 }
 function generate() {
+  importer.cancel();
   try {
     state.text = $("data-text").value;
     report = resolveDocument(state);
@@ -307,56 +309,42 @@ function bindTraceHover() {
   };
   stage.onpointerleave = () => paintTrace(selected);
 }
-async function importFile(file) {
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) {
-    toast(t("toast.fileTooBig"));
-    return;
+function commitImport(result, file) {
+  const next = result.kind === 'project' ? result.project : structuredClone(state);
+  if (result.kind !== 'project') {
+    next.text = toCSV(result.links);
+    next.mode = 'data';next.demo = false;
+    dropInheritedHeadline(next, { force: true });
+    next.config.mainChain = [];next.config.layout = 'auto';next.order = [];
   }
-  try {
-    if (/\.json$/i.test(file.name)) {
-      state = restoreProject(JSON.parse(await file.text()));
-      syncInputs();
-      generate();
-      toast(t("toast.loadedProject"));
-      return;
-    }
-    let links;
-    if (/\.xlsx$/i.test(file.name)) {
-      toast(t("toast.readingExcel"));
-      const { readWorkbook } = await import("./excel.js");
-      sheets = await readWorkbook(await file.arrayBuffer());
-      if (!sheets.length) throw new Error(t("err.noSheets"));
-      $("sheet-select").innerHTML = sheets.map((s, i) => `<option value="${i}">${esc(s.name)}</option>`).join("");
-      $("sheet-wrap").hidden = sheets.length < 2;
-      links = rowsToLinks(sheets[0].rows);
-    } else if (/\.(csv|tsv|txt)$/i.test(file.name)) {
-      links = parseText(await file.text());
-      $("sheet-wrap").hidden = true;
-    } else throw new Error(t("err.badType"));
-    state.text = toCSV(links);
-    state.demo = false;
-    // A new file is a new dataset: a title, period, currency or unit inherited
-    // from the previous document would export this data under another
-    // company's name.
-    dropInheritedHeadline(state, { force: true });
-    state.config.mainChain = [];
-    state.config.layout = "auto";
-    state.order = [];
-    $("data-text").value = state.text;
-    setMode("data");
-    syncInputs();
-    if (generate()) {
-      $("import-feedback").hidden = false;
-      $("import-feedback").textContent = t("ok.imported", { name: file.name, count: model.links.length });
-      toast(t("ok.loadedName", { name: file.name }));
-    }
-  } catch (e) {
-    $("input-error").textContent = t("err.importFailed") + e.message;
+  // Layout is part of validation. A bad replacement cannot damage the open project.
+  const candidate = resolveDocument(next);
+  layoutFinancialGraph(candidate, { ...next.config, order: next.order });
+  state = next;
+  sheets = result.kind === 'workbook' ? result.sheets : [];
+  $("sheet-select").innerHTML = sheets.map((sheet, i) => `<option value="${i}">${esc(sheet.name)}</option>`).join('');
+  $("sheet-wrap").hidden = sheets.length < 2;
+  syncInputs();
+  if (generate()) {
+    $("import-feedback").hidden = false;
+    $("import-feedback").textContent = t("ok.imported", { name: file.name, count: model.links.length });
+    toast(t("ok.loadedName", { name: file.name }));
+  }
+}
+const importer = createImportCoordinator({
+  commit: commitImport,
+  onError(error) {
+    $("input-error").textContent = t("err.importFailed") + error.message;
     $("input-error").hidden = false;
-  } finally {
-    $("data-file").value = "";
-  }
+  },
+  onPending(pending) { $("editor").setAttribute('aria-busy', String(pending)); },
+});
+// Capturing runs before the file-input handler starts its replacement request.
+for (const event of ['input', 'change']) document.addEventListener(event, () => importer.cancel(), true);
+async function importFile(file, options) {
+  await importer.import(file, options);
+  $("data-file").value = '';
+  $("project-file").value = '';
 }
 const financeLabels = FINANCE_FIELDS;
 $("finance-fields").innerHTML = Object.entries(financeLabels).map(([key, label]) => `<label class="field">${label}<input id="f-${key}" inputmode="decimal" value="${""}" aria-label="${label}"></label>`).join("");
@@ -376,6 +364,7 @@ for (const key of Object.keys(FINANCE_FIELDS)) $("f-" + key).addEventListener("i
 // is still incomplete keeps the current chart and reports only what is missing;
 // it must not mark the visible chart stale, because nothing changed yet.
 function switchMode(mode) {
+  importer.cancel();
   setMode(mode);
   if (mode === "data") {
     if (!dirty && report) return;
@@ -457,6 +446,7 @@ for (const dialog of document.querySelectorAll("dialog")) dialog.addEventListene
   }
 });
 for (const b of document.querySelectorAll("[data-example]")) b.onclick = () => {
+  importer.cancel();
   const x = EXAMPLES[Number(b.dataset.example)];
   state = projectFromDocument(x.document);
   state.reportId = x.id;
@@ -519,21 +509,7 @@ $("save-btn").onclick = () => {
   toast(t("toast.projectSaved"));
 };
 $("open-btn").onclick = () => $("project-file").click();
-$("project-file").onchange = async (e) => {
-  const f = e.target.files[0];
-  if (!f) return;
-  try {
-    if (f.size > 1024 * 1024) throw new Error(t("err.fileTooBig"));
-    state = restoreProject(JSON.parse(await f.text()));
-    syncInputs();
-    generate();
-    toast(t("toast.projectRestored"));
-  } catch (error) {
-    toast(t("err.openFailed") + error.message);
-  } finally {
-    e.target.value = "";
-  }
-};
+$("project-file").onchange = (e) => importFile(e.target.files[0], { projectOnly: true });
 $("node-up").onclick = () => reorder(-1);
 $("node-down").onclick = () => reorder(1);
 $("node-close").onclick = () => {

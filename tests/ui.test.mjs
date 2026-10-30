@@ -277,3 +277,23 @@ test('the chrome defaults to English and switches to Chinese without touching da
  assert.equal($('finance-tab').textContent,'利润表速填');
  assert.equal($('data-text').value,dataBefore,'switching the language must not rewrite the data');
 });
+
+test('invalid project replacement preserves the current chart, title and saved data', async () => {
+ const prior=$('sankey').outerHTML,title=$('title-input').value,saved=localStorage.getItem('liuzhang-project-v1');
+ await $('project-file').onchange({target:{files:[{name:'broken.json',size:100,text:async()=>'{"schema":"unknown"}'}]}});
+ assert.equal($('sankey').outerHTML,prior);assert.equal($('title-input').value,title);
+ assert.equal(localStorage.getItem('liuzhang-project-v1'),saved);
+ assert.equal($('input-error').hidden,false);assert.equal($('editor').getAttribute('aria-busy'),'false');
+});
+test('an older file read cannot replace a newer import or a subsequent edit', async () => {
+ let resolveOld;
+ const old={name:'older.csv',size:10,text:()=>new Promise(resolve=>{resolveOld=resolve;})};
+ const first=$('data-file').onchange({target:{files:[old]}});
+ await $('data-file').onchange({target:{files:[{name:'newer.csv',size:10,text:async()=> 'NEW,TOTAL,50\nTOTAL,END,50'}]}});
+ resolveOld('OLD,TOTAL,10\nTOTAL,END,10');await first;
+ assert.match($('data-text').value,/NEW/);assert.doesNotMatch($('data-text').value,/OLD/);
+ const pending=$('data-file').onchange({target:{files:[old]}});
+ fill('data-text','EDIT,TOTAL,80\nTOTAL,END,80');
+ resolveOld('OLD,TOTAL,10\nTOTAL,END,10');await pending;
+ assert.match($('data-text').value,/EDIT/);assert.equal($('png-btn').disabled,true);
+});
