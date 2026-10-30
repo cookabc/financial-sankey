@@ -61,6 +61,7 @@ function setMode(mode) {
     $(m + "-panel").hidden = m !== mode;
     $(m + "-tab").classList.toggle("active", m === mode);
     $(m + "-tab").setAttribute("aria-selected", m === mode);
+    $(m + "-tab").tabIndex = m === mode ? 0 : -1;
   }
 }
 function markDirty() {
@@ -386,6 +387,13 @@ function switchMode(mode) {
     $("input-error").hidden = false;
   }
 }
+for (const id of ['data', 'finance']) $(id + '-tab').onkeydown = event => {
+  if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  const next = event.key === 'Home' ? 'data' : event.key === 'End' ? 'finance' : id === 'data' ? 'finance' : 'data';
+  switchMode(next);$(next + '-tab').focus();
+};
+$("dropzone").onclick = () => $("data-file").click();
 $("data-tab").onclick = () => switchMode("data");
 $("finance-tab").onclick = () => switchMode("finance");
 $("generate-btn").onclick = generate;
@@ -490,7 +498,7 @@ for (const name of ["dragleave", "drop"]) $("dropzone").addEventListener(name, (
 $("focus-btn").onclick = () => {
   const active = document.body.classList.toggle("focus-mode");
   $("focus-btn").textContent = active ? t("action.exitFocus") : t("action.focus");
-  if (active) window.scrollTo({ top: 0, behavior: "smooth" });
+  if (active) window.scrollTo({ top: 0, behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
 };
 $("svg-btn").onclick = () => {
   if (!dirty && model.balanced) exportSvg(diagram, state.config.title, toast, { success: t('export.svgDone'), failure: t('export.failed') });

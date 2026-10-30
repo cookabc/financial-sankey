@@ -142,6 +142,7 @@ dialog::backdrop { background: #2122244d; backdrop-filter: blur(5px); }
 .sankey-link { transition: opacity .16s; }
 .sankey-link:hover { opacity: .8 !important; }
 .sankey-node:hover rect { filter: brightness(.94); }
+
 /* 图第一次出现时让流带和节点依次浮现，而不是整张图"啪"地出现。
    错峰只靠 :nth-child 阶梯，不改渲染器 —— renderSvg() 同时用于导出，
    把延迟写进渲染器输出会让导出的 SVG 也带上动画。
@@ -366,30 +367,31 @@ dialog::backdrop { background: #2a2b2d60; }
 .field { font-size: 12px; }
 .field-note { font-size: 11px; }
 }
-:root { --ink: #252c35; --muted: #707b89; --line: #e4e8ee; --green: #286bd1; --bg: #f7f8fa; }
+:root { --ink: #252c35; --muted: #5c6b7d; --text-secondary: #53657b; --text-hint: #5f7085; --focus: #245b9f; --line: #e4e8ee; --green: #286bd1; --bg: #f7f8fa; }
 body { background: #f7f8fa; color: #252c35; }
 .topbar { background: #fff; border-color: #e5e9ef; }
 .brand { color: #20262e; }
 .brand-mark i { background: #2168ca; }
 .brand-mark i:nth-child(2) { background: #77a0d9; }
 .brand-mark i:nth-child(3) { background: #aebdd1; }
-.top-label,.privacy { color: #75808c; }
+.top-label,.privacy { color: var(--text-hint); }
+.top-label { letter-spacing: .3px; }
 .privacy-dot,.live-dot { background: #2e78d5; }
 .sidebar { background: #fff; border-color: #e3e8ef; }
 .sidebar-heading h2 { color: #313e4d; }
 .segmented { background: #f0f3f7; }
-.segmented button { color: #7c8794; }
+.segmented button { color: var(--text-secondary); }
 .segmented .active { color: #2263b9; background: #fff; box-shadow: 0 1px 5px #233c6110; }
 .upload-zone { background: #f7faff; border-color: #c8d7eb; }
 .upload-zone:hover,.upload-zone.dragover { background: #edf5ff; border-color: #75a0dc; }
 .upload-symbol { color: #3375c7; }
 .upload-zone strong { color: #4a6589; }
-.upload-zone small { color: #8393a9; }
+.upload-zone small { color: var(--text-hint); font-size: 11px; letter-spacing: .2px; }
 textarea { color: #5b6673; background: #fcfdff; border-color: #dfe5ed; }
 input,select { background: #fff; color: #3b4655; border-color: #dbe3ed; }
 input:focus,select:focus,textarea:focus { border-color: #6295da; outline-color: #8cb8ed40; }
 .field,.editor-label,.toggle-row { color: #616f80; }
-.field-note { color: #8390a0; }
+.field-note { color: var(--text-hint); font-size: 11px; }
 .primary { background: #246bc9; border-color: #246bc9; box-shadow: 0 3px 8px #3464a318; }
 .primary:hover { background: #1559b4; }
 .text-btn { color: #4776b3; }
@@ -407,29 +409,29 @@ input:focus,select:focus,textarea:focus { border-color: #6295da; outline-color: 
 .chart-card { background: #fff; border-color: #dfe6ee; box-shadow: 0 5px 20px #263d5e05; }
 .chart-toolbar { background: #fff; border-color: #e6ebf2; }
 .preview-heading { color: #5d6d80; }
-.demo-badge,.demo-badge.custom { background: #edf4fd; color: #5277a9; }
+.demo-badge,.demo-badge.custom { background: #edf4fd; color: #41658f; }
 .export-btn { background: #edf4ff; border-color: #cfdef4; color: #2e68b8; }
 .export-btn:hover { background: #dceaff; }
 .compact { background: #fff; border-color: #dce4ef; }
 .chart-stage { background: #fff; }
 .chart-bottom { border-color: #e8edf3; }
-.chart-status { color: #6e8197; }
-.chart-bottom .text-btn { color: #8193ab; }
-.tip { color: #8794a5; }
+.chart-status { color: var(--text-hint); font-variant-numeric: tabular-nums; }
+.chart-bottom .text-btn { color: var(--text-hint); font-size: 11px; }
+.tip { color: var(--text-hint); }
 .tip>span { color: #7094c6; }
 .node-tools button { background: #f2f6fc; border-color: #d7e3f3; color: #4071ad; }
 .source-card { background: #f3f7fc; border-color: #dae5f3; }
 .source-title { color: #4e6683; }
 .source-title a { color: #4875b1; border-color: #c2d5ed; }
-.source-copy p { color: #7c8ea5; }
+.source-copy p { color: var(--text-hint); font-size: 11px; }
 .details-section { background: #fff; border-color: #e0e6ef; }
 .details-toggle { color: #60758f; }
-.details-toggle small { color: #90a0b4; }
+.details-toggle small { color: var(--text-hint); }
 .table-scroll { background: #fff; }
 th { background: #f3f6fa; color: #71859f; }
 td { color: #5f728b; }
 th,td { border-color: #e2e9f2; }
-.main-footer { color: #9aa5b4; }
+.main-footer { color: var(--text-hint); font-size: 11px; letter-spacing: .2px; }
 .import-feedback { color: #4179bc; }
 #toast { background: #354b67; box-shadow: 0 5px 25px #2a46601c; }
 #tooltip { background: #283c55f5; }
@@ -438,24 +440,24 @@ dialog::backdrop { background: #20354e55; }
 .sample-card { background: #fff; border-color: #dce5f0; }
 .sample-card:hover { background: #eff6ff; }
 .sample-card strong { color: #476589; }
-.sample-card small,.dialog-desc { color: #8596ab; }
-.help-note { background: #f0f5fc; color: #6883a6; }
+.sample-card small,.dialog-desc { color: var(--text-hint); }
+.help-note { background: #f0f5fc; color: var(--text-secondary); }
 .help-list strong { color: #4e6d95; }
-.help-list p { color: #7d8fa7; }
+.help-list p { color: var(--text-hint); }
 .help-list li { color: #6891c4; }
 .close-btn { background: #f1f5fa; color: #7a90ac; }
 @media (max-width:760px){
-.mobile-chart-hint { background: #f7faff; border-color: #e5edf7; color: #7891b2; }
+.mobile-chart-hint { background: #f7faff; border-color: #e5edf7; color: var(--text-hint); font-size: 11px; }
 .palette i { width: 12px; }
 }
 #chain-input { height: 78px; resize: vertical; font: 11px/1.7 var(--sans); padding: 9px; }
 #chain-settings { margin-top: -3px; }
-.layout-note { padding: 10px 20px; background: #f8faff; border-bottom: 1px solid #e6edf7; color: #7087a7; font-size: 10px; line-height: 1.7; }
+.layout-note { padding: 10px 20px; background: #f8faff; border-bottom: 1px solid #e6edf7; color: var(--text-secondary); font-size: 11px; line-height: 1.7; }
 .layout-note.warning { background: #fff8ee; color: #9b743f; }
 .flow-hit { cursor: pointer; pointer-events: stroke; outline: none; }
 .flow-hit:focus { stroke: #285caa44; }
 @media (max-width:760px){
-.layout-note { font-size: 9px; padding: 9px 12px; }
+.layout-note { font-size: 11px; padding: 9px 12px; }
 }
 .topbar{height:60px}.workspace{min-height:calc(100vh - 60px)}.main{padding-top:20px}.chart-stage{max-height:none}.main-footer{justify-content:flex-end}.source-card{padding:12px 16px}.below-chart{margin:10px 0 14px}.input-error,.validation{background:#fff8ef;color:#925528;border-color:#efd8b6}.chart-status.warning{color:#a15b25}@media(max-width:760px){#sankey{min-width:960px}.main{padding-top:16px}.topbar{height:58px}.brand strong{font-size:20px}}
 
@@ -477,3 +479,33 @@ html[data-theme="dark"] .trace-readout, .dark .trace-readout { background: #1c1e
 .trace-readout .trace-name { color: var(--ink); font-weight: 600; font-size: 13px; }
 .trace-readout .trace-share { color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; }
 .trace-readout .trace-flow { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* The upload target is a native button so keyboard users reach the same picker. */
+.upload-zone{width:100%;font:inherit;color:inherit;text-align:center;}
+
+/* Shared interaction sizes and numeric alignment for the existing workbench. */
+button:focus-visible,a:focus-visible{outline-color:var(--focus);}
+input,textarea{caret-color:var(--focus);}
+::selection{background:#dceaff;color:var(--ink);}
+.chart-toolbar{flex-wrap:wrap;gap:10px;}
+.preview-heading{font-size:12px;letter-spacing:.3px;}
+.compact,.export-btn{font-size:12px;min-height:36px;}
+.source-title a,.details-toggle small{font-size:11px;}
+.chart-status,td,.trace-readout{font-variant-numeric:tabular-nums;}
+@media(max-width:760px){
+  .chart-toolbar{padding:12px;}
+  .preview-heading{flex-basis:100%;}
+  .export-actions{width:100%;justify-content:flex-end;}
+  .export-actions button,.local-project button{min-height:44px;font-size:12px;}
+  .chart-bottom{flex-wrap:wrap;gap:8px;}
+  .chart-status,.source-copy p,.main-footer{font-size:11px;}
+  .sidebar :is(input,select,textarea){font-size:16px;}
+}
+@media(max-width:760px){
+  #focus-btn{font-size:12px;padding:7px 8px;min-height:44px;}
+}
+@media(max-width:400px){
+  .topbar{gap:12px;padding-inline:14px;}
+  .brand{gap:8px;}
+  .top-actions .ghost{padding-inline:8px;min-height:44px;}
+}
