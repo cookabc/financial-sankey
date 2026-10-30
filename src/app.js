@@ -37,7 +37,7 @@ function applyChrome() {
 // The storage key is a stable identifier, not a version marker: renaming it
 // would silently orphan every project already saved in a reader's browser.
 const STORAGE_KEY = "liuzhang-project-v1";
-let state = initialProject(), model, graph, diagram, report, selected = null, dirty = false, sheets = [];
+let state = initialProject(), model, graph, diagram, report, selected = null, dirty = false, sheets = [], pngPending = false;
 function mainChain() {
   return state.mode === "finance" ? report?.mainChain ?? [] : state.config.mainChain ?? [];
 }
@@ -150,7 +150,7 @@ function render() {
   $("validation-panel").hidden = !warnings.length;
   $("validation-panel").innerHTML = warnings.length ? `<strong>${model.balanced ? esc(t("warn.heading")) : esc(t("warn.headingBad"))}</strong><ul>${warnings.map((w) => `<li>${w.type === "balance" ? `「${esc(w.node)}」流入 ${fmt(w.in)}，流出 ${fmt(w.out)}，差额 ${fmt(w.diff)} ${esc(state.config.unit)}。` : esc(w.message)}</li>`).join("")}</ul>` : "";
   $("svg-btn").disabled = dirty || !model.balanced;
-  $("png-btn").disabled = dirty || !model.balanced;
+  $("png-btn").disabled = pngPending || dirty || !model.balanced;
   const reason = !model.balanced ? t("warn.exportTitle") : "";
   $("svg-btn").title = reason;
   $("png-btn").title = reason;
@@ -493,11 +493,21 @@ $("focus-btn").onclick = () => {
   if (active) window.scrollTo({ top: 0, behavior: "smooth" });
 };
 $("svg-btn").onclick = () => {
-  if (!dirty && model.balanced) exportSvg(diagram, state.config.title, toast);
+  if (!dirty && model.balanced) exportSvg(diagram, state.config.title, toast, { success: t('export.svgDone'), failure: t('export.failed') });
 };
-$("png-btn").onclick = () => {
-  if (dirty || !model.balanced) return;
-  exportPng(diagram, state.config.title, { button: $("png-btn"), announce: toast });
+$("png-btn").onclick = async () => {
+  if (pngPending || dirty || !model.balanced) return;
+  pngPending = true;
+  try {
+    await exportPng(diagram, state.config.title, {
+      button: $("png-btn"), announce: toast,
+      messages: { pending: t('export.pending'), success: (width, height) => t('export.pngDone', { width, height }), failure: t('export.failed') },
+    });
+  } finally {
+    pngPending = false;
+    $("png-btn").disabled = dirty || !model.balanced;
+    $("png-btn").innerHTML = `<span data-i18n="action.png">${esc(t('action.png'))}</span> <span>↓</span>`;
+  }
 };
 $("save-btn").onclick = () => {
   if (dirty && !generate()) {
@@ -544,6 +554,8 @@ if (langBtn) {
     langBtn.textContent = t("lang.switch");
     langBtn.setAttribute("aria-label", t("lang.label"));
     applyChrome();
+    $("focus-btn").textContent = t(document.body.classList.contains('focus-mode') ? 'action.exitFocus' : 'action.focus');
+    if (pngPending) $("png-btn").textContent = t('export.pending');
     // syncInputs re-labels controls built in JS (the palette name and the
     // finance quick-form fields); render refreshes the status line and badges.
     syncInputs();

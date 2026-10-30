@@ -297,3 +297,21 @@ test('an older file read cannot replace a newer import or a subsequent edit', as
  resolveOld('OLD,TOTAL,10\nTOTAL,END,10');await pending;
  assert.match($('data-text').value,/EDIT/);assert.equal($('png-btn').disabled,true);
 });
+test('pending PNG conversion retains its language and never re-enables export for edited data', async () => {
+ click('generate-btn');
+ if(document.documentElement.lang!=='en')click('lang-btn');
+ let finishFonts;
+ Object.defineProperty(document,'fonts',{configurable:true,value:{ready:new Promise(resolve=>{finishFonts=resolve;})}});
+ const previousImage=globalThis.Image;
+ globalThis.Image=class {set src(_value){queueMicrotask(()=>this.onerror());}};
+ try {
+  const pending=$('png-btn').onclick();
+  assert.match($('png-btn').textContent,/Exporting/);assert.equal($('png-btn').getAttribute('aria-busy'),'true');
+  $('size-input').value='square';$('size-input').dispatchEvent(new dom.window.Event('change'));
+  assert.equal($('png-btn').disabled,true,'style rerender cannot start another export');
+  fill('data-text','CHANGED,TOTAL,40\nTOTAL,END,40');finishFonts();await pending;
+  assert.equal($('png-btn').disabled,true);assert.match($('png-btn').textContent,/Export PNG/);
+  assert.equal($('png-btn').hasAttribute('aria-busy'),false);
+  assert.match($('toast').textContent,/Export failed/);
+ } finally {globalThis.Image=previousImage;delete document.fonts;}
+});

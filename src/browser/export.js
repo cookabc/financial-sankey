@@ -16,7 +16,7 @@ function svgBlob(diagram) {
   return new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n' + renderSvg(diagram)], { type: "image/svg+xml;charset=utf-8" });
 }
 async function pngBlob(diagram) {
-  await document.fonts.ready;
+  await document.fonts?.ready;
   const { width: w, height: h } = diagram, url = URL.createObjectURL(svgBlob(diagram));
   try {
     const image = new Image();
@@ -28,7 +28,9 @@ async function pngBlob(diagram) {
     const canvas = document.createElement("canvas"), scale = Math.min(2, Math.sqrt(16e6 / (w * h)));
     canvas.width = Math.round(w * scale);
     canvas.height = Math.round(h * scale);
-    canvas.getContext("2d").drawImage(image, 0, 0, canvas.width, canvas.height);
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas is unavailable. Try exporting SVG instead.");
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
     if (!blob) throw new Error("无法生成图片");
     return { blob, width: canvas.width, height: canvas.height };
@@ -40,29 +42,32 @@ async function pngBlob(diagram) {
  * Export orchestration: gate on a balanced chart, drive the button state, and
  * announce the outcome. The caller owns the dirty/balanced decision.
  */
-function exportSvg(diagram, title, announce) {
+function exportSvg(diagram, title, announce, messages = {}) {
   try {
     download(svgBlob(diagram), filename(title, "svg"));
-    announce?.("已导出可编辑的矢量 SVG");
+    announce?.(messages.success ?? "已导出可编辑的矢量 SVG");
   } catch (e) {
-    announce?.("导出失败：" + e.message);
+    announce?.((messages.failure ?? "导出失败：") + e.message);
   }
 }
-async function exportPng(diagram, title, { button, announce } = {}) {
+async function exportPng(diagram, title, { button, announce, messages = {} } = {}) {
+  const previous = button ? { markup: button.innerHTML, disabled: button.disabled } : null;
   if (button) {
     button.disabled = true;
-    button.textContent = "正在导出…";
+    button.textContent = messages.pending ?? "正在导出…";
+    button.setAttribute("aria-busy", "true");
   }
   try {
     const result = await pngBlob(diagram);
     download(result.blob, filename(title, "png"));
-    announce?.(`已导出 ${result.width} × ${result.height} PNG`);
+    announce?.(messages.success?.(result.width, result.height) ?? `已导出 ${result.width} × ${result.height} PNG`);
   } catch (e) {
-    announce?.("导出失败：" + e.message);
+    announce?.((messages.failure ?? "导出失败：") + e.message);
   } finally {
     if (button) {
-      button.disabled = false;
-      button.innerHTML = "导出 PNG <span>↓</span>";
+      button.disabled = previous.disabled;
+      button.innerHTML = previous.markup;
+      button.removeAttribute("aria-busy");
     }
   }
 }
