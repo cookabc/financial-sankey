@@ -142,6 +142,32 @@ dialog::backdrop { background: #2122244d; backdrop-filter: blur(5px); }
 .sankey-link { transition: opacity .16s; }
 .sankey-link:hover { opacity: .8 !important; }
 .sankey-node:hover rect { filter: brightness(.94); }
+/* 图第一次出现时让流带和节点依次浮现，而不是整张图"啪"地出现。
+   错峰只靠 :nth-child 阶梯，不改渲染器 —— renderSvg() 同时用于导出，
+   把延迟写进渲染器输出会让导出的 SVG 也带上动画。
+   每次重绘都是全新节点，所以动画自然重播，不需要手动触发。
+   阶梯只铺前十来个：再往后延迟就长到让人等，剩下的跟随最后一档一起落。 */
+.sankey-link {
+  animation: sankey-flow-in 320ms cubic-bezier(.2,.8,.2,1) backwards;
+}
+.sankey-node {
+  animation: sankey-node-in 260ms cubic-bezier(.2,.8,.2,1) backwards;
+}
+.sankey-link:nth-child(1), .sankey-node:nth-child(1) { animation-delay: 0ms; }
+.sankey-link:nth-child(2), .sankey-node:nth-child(2) { animation-delay: 24ms; }
+.sankey-link:nth-child(3), .sankey-node:nth-child(3) { animation-delay: 48ms; }
+.sankey-link:nth-child(4), .sankey-node:nth-child(4) { animation-delay: 72ms; }
+.sankey-link:nth-child(5), .sankey-node:nth-child(5) { animation-delay: 96ms; }
+.sankey-link:nth-child(6), .sankey-node:nth-child(6) { animation-delay: 120ms; }
+.sankey-link:nth-child(7), .sankey-node:nth-child(7) { animation-delay: 144ms; }
+.sankey-link:nth-child(8), .sankey-node:nth-child(8) { animation-delay: 168ms; }
+.sankey-link:nth-child(n+9), .sankey-node:nth-child(n+9) { animation-delay: 192ms; }
+@keyframes sankey-flow-in {
+  from { opacity: 0; }
+}
+@keyframes sankey-node-in {
+  from { opacity: 0; transform: translateX(-4px); }
+}
 @media (min-width:1600px){
 .workspace { grid-template-columns: 350px minmax(0,1fr); }
 .sidebar { padding: 32px; }
@@ -195,6 +221,8 @@ dialog { padding: 23px; }
 }
 @media (prefers-reduced-motion:reduce){
 * { transition: none !important; scroll-behavior: auto !important; }
+/* 入场是装饰：减弱动效时图表应当直接在那儿，而不是慢慢淡进来 */
+.sankey-link, .sankey-node { animation: none !important; }
 }
 @media (min-width:761px){
 .main { padding-top: 27px; }
