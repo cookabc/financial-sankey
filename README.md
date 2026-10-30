@@ -30,13 +30,13 @@ The page supports CSV / TSV paste upload, multi-sheet XLSX, two structured state
 
 The three-column table accepts only non-negative, acyclic flows. A normalized statement can model tax benefits, negative adjustments and operating / net loss explicitly; a loss uses a documented non-cash accounting bridge, not extra income. Missing values, mixed currencies/units, or decimal sums that cannot be preserved exactly all raise an explicit error — it never takes absolute values to hide a problem, and never silently balances or converts. An imbalance is previewable but must be corrected before export.
 
-Legacy JSON data, colours and an explicit auto-layout choice are preserved. Recent projects still live under the original browser localStorage key; opening or importing never uploads their contents.
+Saved projects live in the browser's localStorage, and opening or importing one never uploads its contents. A project file records its schema version; a file from a different version raises an explicit error rather than being silently rewritten.
 
 ## Verification
 
-All v10 node / ribbon geometry snapshots are kept, with regressions for the top-edge output, narrow right-angle rectangles, true proportions, natural left/right branching and thin-line display. Tests cover many synthetic statement structures, that renaming does not change semantics, loss recovery, decimals, zero values, mixed currencies, broken-conservation cases, hostile text, project read/write, CSV/XLSX, the CLI and the UI. Synthetic data lives only in `fixtures/` for tests and is never used as an on-page company example; `fixtures/us/` holds six real US-statement reports verified line-by-line against SEC EDGAR XBRL-rendered statements (Apple, Microsoft, NVIDIA, Alphabet, Amazon, Intel), used only as test input, with derived / residual line items clearly labelled in each file's notes.
+Geometry snapshots cover the top-edge output, narrow right-angle rectangles, true proportions, natural left/right branching and thin-line display. Tests cover many synthetic statement structures, that renaming does not change semantics, loss recovery, decimals, zero values, mixed currencies, broken-conservation cases, hostile text, project read/write, CSV/XLSX, the CLI and the UI. Synthetic data lives only in `fixtures/` for tests and is never used as an on-page company example; `fixtures/us/` holds six real US-statement reports verified line-by-line against SEC EDGAR XBRL-rendered statements (Apple, Microsoft, NVIDIA, Alphabet, Amazon, Intel), used only as test input, with derived / residual line items clearly labelled in each file's notes.
 
-`src/core/index.js` is the only public API. Source and build output are committed in small, synchronised steps; the static package and the saved version use the same commit.
+`src/core/index.js` is the only public API.
 
 ## Licence
 

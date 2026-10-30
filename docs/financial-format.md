@@ -1,5 +1,7 @@
 # Reusable financial input format
 
+**English** · [简体中文](financial-format.zh-CN.md)
+
 `src/core/financial-data.js` is a pure ES module. It has no UI, network, storage,
 company example, rendering, color, or layout dependency. It accepts ordinary
 JavaScript objects and exports:

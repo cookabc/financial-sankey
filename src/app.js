@@ -26,6 +26,11 @@ function applyChrome() {
   if (meta) meta.setAttribute("content", t("doc.description"));
   for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
   for (const el of document.querySelectorAll("[data-i18n-aria]")) el.setAttribute("aria-label", t(el.dataset.i18nAria));
+  // The guide's two doc links ship in both languages, so each points at the
+  // edition matching the interface rather than always at the English one.
+  for (const el of document.querySelectorAll("[data-doc-en]")) {
+    el.setAttribute("href", lang === "en" ? el.dataset.docEn : el.dataset.docZh);
+  }
 }
 
 // The storage key is a stable identifier, not a version marker: renaming it

@@ -1,5 +1,7 @@
 # Liuzhang: a reusable financial Sankey chart
 
+**English** · [简体中文](api.zh-CN.md)
+
 This tool works on any company's **structured financial statement, already normalised to the spec**. It is not a PDF/OCR tool or a natural-language recogniser. Both running and rendering happen locally; no external API is involved. Company names, node display text and the actual amounts do not influence layout choice; the semantics come from explicit role, mainChain, metric and metadata.
 
 ## Module boundaries
@@ -50,7 +52,7 @@ Format details are in [financial-format.md](./financial-format.md). Two explicit
 
 ## Rendering conventions and limits
 
-- A rectangle's real height is proportional to its flow value. The main chain leaves the top of the source node's right edge; income merging in from the left of the target is allowed to curve naturally. A shared centre line is no longer the standard.
+- A rectangle's real height is proportional to its flow value. The main chain leaves the top of the source node's right edge; income merging in from the left of the target is allowed to curve naturally.
 - The minimum band width defaults to 4 canvas pixels and is an independent display enhancement that never rewrites an amount. Display band width and node height are adjusted together, and displayed ports stay conserved; the explanation lives in the usage guide and style help, and the chart carries no drawing-note footnote. A value of 0 is strict proportionality.
 - Structured input declares an explicit company, period, currency and unit; mixed currencies or units are rejected and never auto-converted.
 - A loss uses an explicitly labelled **non-cash accounting difference bridge** and falls back to automatic layout, rather than treating the difference as revenue. The sum of all source nodes should not be called revenue.
@@ -106,7 +108,3 @@ layout starts from actual widths, so enhancements do not accumulate.
 Minimum 0 disables all display additions. Minimum is measured vertically in
 SVG canvas pixels, not perpendicular to strongly sloping bands or in CSS
 viewport pixels. No output can guarantee arbitrary label collision freedom.
-
----
-
-中文版见 [api.zh-CN.md](api.zh-CN.md)。

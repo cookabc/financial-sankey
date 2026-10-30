@@ -1,14 +1,12 @@
 # Running locally, and what the source covers
 
-For how to use the project see the root [README](../README.md). This document only covers source-delivery matters: which version this corresponds to, running offline, and the boundary beyond which data does not travel with the source.
+**English** · [简体中文](local-setup.zh-CN.md)
 
-## Corresponding version
+For how to use the project see the root [README](../README.md). This document covers source-delivery matters: running offline, and the boundary beyond which data does not travel with the source.
 
-- Live site: https://financial-sankey-studio.chuangcius.chatgpt.site
-- Latest saved Sites version: v15 (release record status `succeeded`, verified 2026-10-26).
-- Source commit: `7504d0c5003cb697d4b2f971fe6bc328a3d9f1a5`.
-- The application source, tests and build configuration are consistent with that commit; `SOURCE-PROVENANCE.json` records the SHA-256 of 72 tracked files. `dist/` is build output and is not tracked, so it is not hashed there — `npm run build` regenerates it and the build itself is deterministic.
-- The export contains code only; the live site was not modified or republished.
+## Version
+
+`package.json` and the git tag are the version of record. `dist/` is build output and is not tracked; `npm run build` regenerates it, and the build is deterministic.
 
 ## Running the bundled page without installing anything
 
@@ -37,7 +35,3 @@ Existing project data lives in the original browser's localStorage at the origin
 ## Licence
 
 MIT — see [LICENSE](../LICENSE). It covers the code in this repository. Third-party licence comments in the build output are preserved, and dependencies installed by `npm ci` carry their own licences.
-
----
-
-中文版见 [local-setup.zh-CN.md](local-setup.zh-CN.md)。

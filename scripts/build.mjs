@@ -11,4 +11,4 @@ let html=await readFile('dist/index.html','utf8');
 for(const file of ['app.js','style.css']){const hash=createHash('sha256').update(await readFile('dist/'+file)).digest('hex').slice(0,12);html=html.replaceAll('./'+file,'./'+file+'?v='+hash);}
 await writeFile('dist/index.html',html);
 
-for(const file of ['financial-format.md','api.md','api.zh-CN.md','local-setup.md','local-setup.zh-CN.md'])await copyFile('docs/'+file,'dist/'+file);
+for(const file of ['financial-format.md','financial-format.zh-CN.md','api.md','api.zh-CN.md','local-setup.md','local-setup.zh-CN.md'])await copyFile('docs/'+file,'dist/'+file);

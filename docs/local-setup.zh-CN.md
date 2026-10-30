@@ -1,14 +1,12 @@
 # 本地运行与源码说明
 
-项目用法见根 [README](../README.md)。这份文档只讲源码交付相关的事：版本对应、离线运行、以及数据不随源码迁移的边界。
+[English](local-setup.md) · **简体中文**
 
-## 对应版本
+项目用法见根 [README](../README.md)。这份文档讲源码交付相关的事：离线运行、以及数据不随源码迁移的边界。
 
-- 线上地址：https://financial-sankey-studio.chuangcius.chatgpt.site
-- Sites 最新保存版本：v15（发布记录状态 succeeded，2026-10-26 核验）。
-- 源码提交：`7504d0c5003cb697d4b2f971fe6bc328a3d9f1a5`。
-- 应用源代码、测试与构建配置与该提交保持一致；`SOURCE-PROVENANCE.json` 记录 72 个受版本控制文件的 SHA-256。`dist/` 是构建产物、不入版本库，因此不在其中记录——`npm run build` 会重新生成，构建本身可复现。
-- 导出仅包含代码，未修改或重新发布线上站点。
+## 版本
+
+版本以 `package.json` 与 git 标签为准。`dist/` 是构建产物、不入版本库；`npm run build` 会重新生成，构建本身可复现。
 
 ## 不安装依赖直接跑随附网页
 
