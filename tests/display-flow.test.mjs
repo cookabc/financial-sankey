@@ -22,7 +22,7 @@ test('display optimizer packs full minimum-width ports and never changes monetar
   const scale=scaled[0].actualWidth/scaled[0].value;
   if(d.rail)assert.ok(Math.abs(scale-d.rail.scale)<1e-7,'geometry scale matches the rail scale');
   for(const l of scaled)near(l.actualWidth,l.value*scale);
-  for(const n of d.graph.links.filter(l=>l.value===0))assert.equal(l.actualWidth,0);
+  for(const link of d.graph.links.filter(l=>l.value===0))assert.equal(link.actualWidth,0);
   if(!min)for(const n of d.graph.nodes)near(n.y1-n.y0,n.value*scale);
  }
 });

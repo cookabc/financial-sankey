@@ -15,7 +15,7 @@
 
 ## 使用
 
-Node.js 22+：`npm ci`、`npm test`、`npm run build`。静态产物在 `dist/`。
+Node.js 24.x（完整支持范围见 `package.json` 的 `engines`）：`npm ci`、`npm test`、`npm run build`。静态产物在 `dist/`。
 `npm run verify:labels` 会在无头 Chrome 里加载构建后的 `dist/`，验证九种状态下标签
 既不相撞也不越出画布；运行前需先在 8123 端口起一个静态服务。
 
@@ -42,3 +42,25 @@ node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.sv
 MIT，见 [LICENSE](LICENSE)。
 
 English readme: [README.md](README.md).
+
+## 开发与浏览器检查
+
+使用 Node.js 24.x 和 npm；本机版本由 `.nvmrc` 记录。
+
+```sh
+npm ci
+npm run dev
+```
+
+打开 **http://127.0.0.1:4183/**。Vite 自动刷新源码修改。`npm run check` 依次执行 ESLint、Node 测试和生产构建检查；`npm run preview` 预览已构建的 `dist/`。开发和预览服务均可用 Ctrl+C 停止。
+
+JavaScript、CSS 和按需加载的 Excel 模块使用内容哈希文件名。中英文指南在开发环境可下载，并随生产构建输出。独立 API 与 CLI 继续使用不依赖浏览器的源码模块。
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
+
+浏览器测试先构建页面，再在 **127.0.0.1:4283** 启动独立预览。桌面和手机尺寸的 Chromium 测试覆盖建图、流量守恒校验、SVG 下载、本地导入与刷新恢复、指南下载、键盘页签及系统文件选择器。CI 自动安装 Chromium，并在测试失败时上传轨迹和截图。本机已有 Chrome 时，可运行 `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e`。该套件未覆盖 Safari 和 Firefox。
+
+`src/browser/import.js` 负责文件读取与校验；只有最近一次导入可以替换当前项目，编辑会取消待完成的导入。替换失败时保留当前项目及已保存的数据。PNG 转换期间禁止重复导出，结束时按当前图表状态恢复按钮。

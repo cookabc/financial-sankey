@@ -258,7 +258,7 @@ function moveChartFocus(e, step) {
 }
 function bindChart() {
   for (const n of document.querySelectorAll("[data-node]")) {
-    const id = n.dataset.node, node = graph.nodes.find((x) => x.id === id), original = model.nodes.find((x) => x.id === id);
+    const id = n.dataset.node;
     n.onclick = () => selectNode(id);
     n.onkeydown = (e) => {
       if (e.key === "Enter" || e.key === " ") {
@@ -577,6 +577,7 @@ try {
   const local = localStorage.getItem(STORAGE_KEY);
   if (local) state = restoreProject(JSON.parse(local));
 } catch {
+  // Unavailable or invalid local storage must not block the workbench.
 }
 syncInputs();
 generate();

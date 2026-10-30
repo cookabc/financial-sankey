@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,mkdtempSync} from 'node:fs';import {execFileSync} from 'node:child_process';import {tmpdir} from 'node:os';import {join} from 'node:path';
-import {DEFAULT_EXAMPLE} from '../src/examples/registry.js';import {initialProject,restoreProject,resolveDocument,projectFromDocument,financeDocument} from '../src/browser/project.js';import {generateSvg,normalizeInput,layoutFinancialGraph} from '../src/core/index.js';
+import {DEFAULT_EXAMPLE} from '../src/examples/registry.js';import {initialProject,restoreProject,resolveDocument} from '../src/browser/project.js';import {generateSvg,normalizeInput} from '../src/core/index.js';
 test('a saved project round-trips with its style and data intact',()=>{
  const p=initialProject();
  const styled={...p,config:{...p.config,palette:'warm',ribbon:'gradient',layout:'auto',layoutExplicit:true}};

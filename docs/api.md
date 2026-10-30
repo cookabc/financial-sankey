@@ -22,7 +22,7 @@ This tool works on any company's **structured financial statement, already norma
 
 ## Install and command line
 
-Requires Node.js 22+. Run `npm ci` in the source directory.
+Use Node.js 24.x; see `package.json` engines for the complete supported range. Run `npm ci` in the source directory.
 
 ```sh
 node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.svg
@@ -108,3 +108,5 @@ layout starts from actual widths, so enhancements do not accumulate.
 Minimum 0 disables all display additions. Minimum is measured vertically in
 SVG canvas pixels, not perpendicular to strongly sloping bands or in CSS
 viewport pixels. No output can guarantee arbitrary label collision freedom.
+
+`vite.config.js` owns the browser build and bilingual Guide downloads; `scripts/build.mjs` remains a compatibility entry for the same Vite build.

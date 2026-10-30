@@ -2,7 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { HEADLINE_FIELDS, NEUTRAL_HEADLINE, adjacentSibling, canvasOrder, dropInheritedHeadline, orderedSiblings, swapInOrder } from '../src/browser/session.js';
 
-const defaults = { title: '财务流向分析', period: '未指定期间', currency: '未指定', unit: '未指定' };
 
 test('a dataset inherited from a document drops the document headline exactly once', () => {
   const state = { document: { links: [] }, reportId: 'spacex-2026-q3', config: { title: 'SpaceX · 2026 第三季度利润流向', period: '2026 Q3', currency: 'USD', unit: '百万美元' } };

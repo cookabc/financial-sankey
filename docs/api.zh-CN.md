@@ -22,7 +22,7 @@
 
 ## 安装与命令行
 
-要求 Node.js 22+。在源码目录执行 `npm ci`。
+要求 Node.js 24.x（完整支持范围见 `package.json` 的 `engines`）。在源码目录执行 `npm ci`。
 
 ```sh
 node scripts/render-financial.mjs examples/spacex-2026-q3.json --output chart.svg
@@ -108,3 +108,5 @@ layout starts from actual widths, so enhancements do not accumulate.
 Minimum 0 disables all display additions. Minimum is measured vertically in
 SVG canvas pixels, not perpendicular to strongly sloping bands or in CSS
 viewport pixels. No output can guarantee arbitrary label collision freedom.
+
+`vite.config.js` 管理浏览器构建和中英文指南下载；`scripts/build.mjs` 保留为同一套 Vite 构建的兼容入口。

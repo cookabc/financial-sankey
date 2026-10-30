@@ -15,7 +15,9 @@ The image above is the default state after loading SpaceX's official 2026 Q3 sta
 
 ## Usage
 
-Node.js 22+: `npm ci`, `npm test`, `npm run build`. Static output is in `dist/`.
+Use Node.js 24.x (the exact local version is in `.nvmrc`) and npm. Run `npm ci`, then `npm run dev` and open **http://127.0.0.1:4183/**. Vite reloads source edits automatically. `npm run check` runs ESLint, the Node test suite and the production build with release checks. `npm run preview` serves the built `dist/`; stop either server with Ctrl+C.
+
+The development and production builds use the same Vite entry. JavaScript and CSS use content hashes, including the Excel module loaded only on XLSX import. The six bilingual Guide documents are served in development and included in `dist/`. The standalone API and CLI continue to use browser-independent source modules.
 `npm run verify:labels` renders the built `dist/` in headless Chrome and asserts that
 no label collides or leaves the canvas across nine states; serve `dist/` on port 8123
 before running it.
@@ -43,3 +45,14 @@ Geometry snapshots cover the top-edge output, narrow right-angle rectangles, tru
 MIT, see [LICENSE](LICENSE).
 
 中文说明见 [README.zh-CN.md](README.zh-CN.md)。
+
+## Browser acceptance
+
+```sh
+npx playwright install chromium
+npm run test:e2e
+```
+
+This builds the site and starts a separate preview at **127.0.0.1:4283**. Playwright runs desktop and mobile Chromium through data generation, balance validation, SVG download, local import and reload, Guide downloads, keyboard tabs and the native file picker. CI installs Chromium automatically and uploads traces/screenshots when a browser test fails. Use `PLAYWRIGHT_CHANNEL=chrome npm run test:e2e` for an existing local Chrome. Safari and Firefox are not covered by this suite.
+
+File reading and validation live in `src/browser/import.js`; only the latest request can replace the open project. Editing cancels pending imports. A failed replacement preserves the current project and saved data. PNG conversion keeps exports disabled while it runs and rechecks the current chart before enabling them again.

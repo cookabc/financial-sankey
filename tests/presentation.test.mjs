@@ -5,7 +5,7 @@ import {JSDOM} from 'jsdom';
 import {normalizeInput} from '../src/core/financial-data.js';
 import {layoutFinancialGraph} from '../src/core/layout.js';
 import {renderSvg} from '../src/core/render-svg.js';
-import {wrap, wrapLabel, textWidth, truncateLine} from '../src/core/svg-tree.js';
+import {wrapLabel, textWidth, truncateLine} from '../src/core/svg-tree.js';
 import {nodeColor, palettes} from '../src/core/theme.js';
 import {EXAMPLES} from '../src/examples/registry.js';
 import {financeDocument} from '../src/browser/project.js';

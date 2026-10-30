@@ -122,7 +122,7 @@ async function connect() {
         await new Promise((resolve) => { ws.onopen = resolve; });
         return;
       }
-    } catch {}
+    } catch { /* Chrome may still be starting; retry until the deadline. */ }
     await sleep(250);
   }
   throw new Error('Could not attach to Chrome. Is the HTTP server running?');
@@ -183,7 +183,7 @@ try {
 
   console.log(`\n=== ${STATES.length} states, ${totalInk} real ink collisions or out-of-canvas labels ===`);
 } finally {
-  try { ws?.close(); } catch {}
+  try { ws?.close(); } catch { /* Chrome may already be stopped during cleanup. */ }
   chrome.kill();
 }
 

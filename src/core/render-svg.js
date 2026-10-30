@@ -39,7 +39,6 @@ function renderSvg(diagram, { interactive = false, selected = null } = {}) {
   // footer notes. Without explicit bounds a source label drawn above its node
   // slid up into the subtitle or the legend and printed on top of them.
   const contentTop = subtitleY + (clear ? 58 : 37), contentBottom = h - (diagram.footer ?? 58) + 12;
-  const clampLabelY = (y, blockHeight) => Math.max(contentTop + 20, Math.min(contentBottom - blockHeight, y));
   const defs = el("defs");
   svg.append(defs);
   const linksG = el("g"), hitsG = el("g"), nodesG = el("g");

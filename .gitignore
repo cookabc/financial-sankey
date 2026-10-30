@@ -4,3 +4,9 @@ qa/
 .sites-runtime/
 /dist
 .DS_Store
+
+coverage/
+playwright-report/
+test-results/
+*.log
+.vite/
